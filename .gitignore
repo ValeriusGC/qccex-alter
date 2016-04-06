@@ -46,6 +46,7 @@ Makefile*
 
 #directories
 /build*
+/whole_src/build*
 
 # ~Added by VFX
 #------------------------------

@@ -17,6 +17,9 @@ QT  += core gui
 QT  += testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+# Where project *.pro is located
+PROJECT_ROOT = $$PWD/
+
 TARGET = qccex-alter_tests
 TEMPLATE = app
 # Can be used in code to check if we in TEST_MODE
@@ -46,6 +49,10 @@ OBJECTS_DIR = build
 UI_DIR = build
 MOC_DIR = build
 RCC_DIR = build
+
+# Where one should place binary
+release: DESTDIR = $$PROJECT_ROOT/../build/tests
+debug:   DESTDIR = $$PROJECT_ROOT/../build/tests
 
 RESOURCES += \
     qccex-alter.qrc \
