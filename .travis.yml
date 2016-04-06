@@ -1,4 +1,3 @@
-# ALTER
 language: cpp
 
 os:
@@ -55,7 +54,7 @@ script:
     else
          ./../bin/tests/tests.app/Contents/MacOS/tests -platform minimal -txt
       ;
-    fi
+    fi    
 #  - cd ../..
 #  - mkdir -p  build/Release
 #  - cd build/Release
