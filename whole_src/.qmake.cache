@@ -1,0 +1,13 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# VFX_INFO: t_message(some_message)
+#
+# 	Function adds DATE_TIME prefix to standard message
+#
+# ~VFX_INFO: t_message(some_message)
+defineReplace(t_message) {
+    # Ordinarily $$_DATE returns full DateTime 'Thu Mar 3 14:53:02 2016'
+    # $$list($$_DATE_) turns it to list with ','
+    # $$member($$list($$_DATE_), -2) takes second item from the end of list.
+    message([$$member($$list($$_DATE_), -2)] $$ARGS)
+    return(1)
+}

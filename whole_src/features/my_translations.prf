@@ -1,0 +1,62 @@
+!isEmpty(TRANSLATIONS): contains(RESOURCES, translations.qrc) {
+  # создаю каталог transactions для хранения .qm файлов
+  mkpath($$_PRO_FILE_PWD_/translations)
+  # Проверяю, что значение переменной TRANSLATIONS поменялось
+  # с прошлого запуска qmake.
+  # Очень вряд ли другие фичи будут менять переменную TRANSLATIONS,
+  # так что я не беспокоюсь по этому поводу.
+  _old_translations = $$cat($$_PRO_FILE_PWD_/translations.txt)
+  _current_translations = $$TRANSLATIONS
+  _current_translations -= $$_old_translations
+  _old_translations -= $$TRANSLATIONS
+  _transaltions_diff = ALWAYS
+#  _transaltions_diff = $$_old_translations $$_current_translations
+  !isEmpty(_transaltions_diff)|!exists($$_PRO_FILE_PWD_/translations.txt)|!exists($$_PRO_FILE_PWD_/translations.qrc) {
+    $$t_message(regenerating translations.qrc)
+    # создаю translations.qrc
+    _translations_qrc += <RCC><qresource prefix=\"/\">$$escape_expand(\n)
+    for(_translation_name, TRANSLATIONS) {
+      _translation_name_qm = $$section(_translation_name,".", 0, 0).qm
+      _translation_name_qm = $$section(_translation_name_qm, "/", -1)
+      # Если файлы .qm не существует - создаю заглушки
+      # Это нужно для того, чтобы к ним создались зависимости.
+      # .ts файлы должны существовать, иначе построение не пройдет;
+      # запустите lupdate в такой ситуации.
+      system($$shell_path($$[QT_INSTALL_BINS]/lrelease) $$shell_path($$_PRO_FILE_PWD_/$$_translation_name) -qm $$shell_path($$_PRO_FILE_PWD_/translations/$$_translation_name_qm))
+    }
+
+    # Copying system QMs
+    win32 {
+        for(qm, QT_QM) {
+            system(copy /Y $$replace(qm, /, \\) $$replace(_PRO_FILE_PWD_, /, \\)\\translations\\)
+        }
+    }
+    !win32 {
+        $$t_message(QT_QM: $$QT_QM)
+        $$t_message(_PRO_FILE_PWD_: $$_PRO_FILE_PWD_)
+        system(cp -f $$QT_QM $$shell_path($$_PRO_FILE_PWD_/translations/))
+    }
+
+    # Filling resource file
+    FILELIST = $$files($$_PRO_FILE_PWD_/translations/*.qm)
+    for(_translation_name_qm, FILELIST) {
+      _translation_name_qm = $$section(_translation_name_qm, "/", -1)
+      _translations_qrc += <file>translations/$$_translation_name_qm</file>$$escape_expand(\n)
+    }
+
+    # Close resource file and write
+    _translations_qrc += </qresource></RCC>$$escape_expand(\n)
+    write_file($$_PRO_FILE_PWD_/translations.qrc, _translations_qrc)
+#    write_file($$_PRO_FILE_PWD_/translations.txt, TRANSLATIONS);
+#    QMAKE_CLEAN += $$shell_path($$_PRO_FILE_PWD_/translations.txt)
+  }
+
+    # А НАДО ЛИ ЭТО??
+  # Запуск lrelease в makefile
+#  QMAKE_EXTRA_COMPILERS += _translations_lrelease
+#  _translations_lrelease.input = TRANSLATIONS
+#  _translations_lrelease.output = $$_PRO_FILE_PWD_/translations/${QMAKE_FILE_BASE}.qm
+#  _translations_lrelease.commands = $$[QT_INSTALL_BINS]/lrelease ${QMAKE_FILE_IN} -qm ${QMAKE_FILE_OUT}
+#  _translations_lrelease.CONFIG += no_link
+
+}
