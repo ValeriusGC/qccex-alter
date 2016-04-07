@@ -94,10 +94,10 @@ before_deploy:
 
 deploy:
   - provider: releases
-#    api_key: e73e5f0077b05e58074ebf45614146e61c5dc73c
-    api_key:
-        secure: EyOMTm+fzo7rWhRMfROH8/jeJnSFmLFz4pfD/HuFJI2ohayHJOIfASMdg0d7N2cGFS9G7iuPUmQ1S56YC8BSnEefc3lASB1i5hiSOMWJV+lO3N1JBFCWxCBzHc9Hs+XKwHwyhZ5iIYncx+JHPYRNWtUD+A6SZHiZ+sVI48gYMyA=
-    file: qccex-333.deb
+    api_key: e73e5f0077b05e58074ebf45614146e61c5dc73c
+#    api_key:
+#        secure: EyOMTm+fzo7rWhRMfROH8/jeJnSFmLFz4pfD/HuFJI2ohayHJOIfASMdg0d7N2cGFS9G7iuPUmQ1S56YC8BSnEefc3lASB1i5hiSOMWJV+lO3N1JBFCWxCBzHc9Hs+XKwHwyhZ5iIYncx+JHPYRNWtUD+A6SZHiZ+sVI48gYMyA=
+    file: qccex-alter333.deb
     skip_cleanup: true
     on:
         repo: ValeriusGC/qccex-alter
