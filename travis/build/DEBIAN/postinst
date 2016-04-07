@@ -1,0 +1,4 @@
+#! /bin/bash -e
+
+chmod a+x /opt/qccex-alter/qccex-alter
+ln -fs "/opt/qccex-alter/qccex-alter" "/usr/bin/qccex-alter"
