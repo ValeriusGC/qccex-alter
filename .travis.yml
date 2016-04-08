@@ -93,12 +93,12 @@ before_deploy:
          export GIT_TAG=macosx-b$TRAVIS_BUILD_NUMBER-$TIME_STRING
       ;
     fi
-  - git tag $GIT_TAG -a -m "Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER"
-  - echo TAGPERM is $TAGPERM
-  - echo GIT_TAG is $GIT_TAG
-  - echo TRAVIS_BUILD_NUMBER is $TRAVIS_BUILD_NUMBER
-  - echo TIME_STRING is $TIME_STRING
-  - git push -q https://$TAGPERM@github.com/ValeriusGC/qccex-alter --tags
+#  - git tag $GIT_TAG -a -m "Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER"
+#  - echo TAGPERM is $TAGPERM
+#  - echo GIT_TAG is $GIT_TAG
+#  - echo TRAVIS_BUILD_NUMBER is $TRAVIS_BUILD_NUMBER
+#  - echo TIME_STRING is $TIME_STRING
+#  - git push -q https://$TAGPERM@github.com/ValeriusGC/qccex-alter --tags
 
 deploy:
   - provider: releases
