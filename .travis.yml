@@ -95,10 +95,11 @@ before_deploy:
     fi
   - git tag $GIT_TAG -a -m "Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER"
   - git push -q https://$TAGPERM@github.com/ValeriusGC/qccex-alter --tags
+  - echo TAGPERM is $TAGPERM
 
 deploy:
   - provider: releases
-    api_key: e73e5f0077b05e58074ebf45614146e61c5dc73c
+    api_key: d70a10ae48da549a099f6d3e4e647877f7a11a8f
 #    api_key:
 #        secure: EyOMTm+fzo7rWhRMfROH8/jeJnSFmLFz4pfD/HuFJI2ohayHJOIfASMdg0d7N2cGFS9G7iuPUmQ1S56YC8BSnEefc3lASB1i5hiSOMWJV+lO3N1JBFCWxCBzHc9Hs+XKwHwyhZ5iIYncx+JHPYRNWtUD+A6SZHiZ+sVI48gYMyA=
     file: qccex-alter333.deb
