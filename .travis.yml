@@ -102,7 +102,7 @@ before_deploy:
 
 deploy:
   - provider: releases
-    api_key: d70a10ae48da549a099f6d3e4e647877f7a11a8f
+  - api_key: d70a10ae48da549a099f6d3e4e647877f7a11a8f
 #    api_key:
 #        secure: EyOMTm+fzo7rWhRMfROH8/jeJnSFmLFz4pfD/HuFJI2ohayHJOIfASMdg0d7N2cGFS9G7iuPUmQ1S56YC8BSnEefc3lASB1i5hiSOMWJV+lO3N1JBFCWxCBzHc9Hs+XKwHwyhZ5iIYncx+JHPYRNWtUD+A6SZHiZ+sVI48gYMyA=
     file: qccex-alter333.deb
