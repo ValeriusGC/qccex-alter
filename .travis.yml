@@ -107,7 +107,8 @@ deploy:
         repo: ValeriusGC/qccex-alter
         branch: master
         tags: false
-        condition: $CONFIG = release && ${TRAVIS_OS_NAME} = linux
+        condition: ${TRAVIS_OS_NAME} = linux
+#        condition: $CONFIG = release && ${TRAVIS_OS_NAME} = linux
 
 notifications:
   recipients:
