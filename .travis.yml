@@ -71,8 +71,8 @@ before_deploy:
   # create debian package for linux and a disk image for OSX
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
          cd ../../travis
-      && dpkg-deb -x qccex-alter.deb build
-      && mv ../whole_src/build/Debug/qccex-alter build/opt/qccex-alter/
+      && dpkg-deb -x qccex-alter.deb build      
+      && mv ../whole_src/build/release/qccex-alter build/opt/qccex-alter/
       && dpkg -b build qccex-alter333.deb
       ;
     else
