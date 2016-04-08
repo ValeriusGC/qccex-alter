@@ -43,8 +43,10 @@ script:
       && CPPFLAGS=-I$QTDIR/include
       ;
     fi
-  - cd ./whole_src/project/
-  - qmake ./qccex-alter_tests.pro && make -s -j 2
+  - cd ./whole_src
+  - mkdir -p  build/tests
+  - cd ./build/tests/
+  - qmake ./../../project/qccex-alter_tests.pro && make -s -j 2
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
       if [ "${TRAVIS_BRANCH}" != "master" ]; then
            ./../build/tests/qccex-alter_tests -platform minimal -txt
@@ -55,13 +57,13 @@ script:
          ./../bin/tests/tests.app/Contents/MacOS/tests -platform minimal -txt
       ;
     fi    
-#  - cd ../..
-#  - mkdir -p  build/Release
-#  - cd build/Release
+  - cd ../..
+  - mkdir -p  build/release
+  - cd ./build/release/
 #  - echo "#define BUILD ""$TRAVIS_BUILD_NUMBER" > build_number.h
 #  - echo "#define RELEASE \"Travis CI\"" > release.h
-  - echo CONFIG is $CONFIG
-  - qmake ./qccex-alter.pro #CONFIG+=$CONFIG
+#  - echo CONFIG is $CONFIG
+  - qmake ./../../project/qccex-alter.pro #CONFIG+=$CONFIG
   - make
   
 before_deploy:
