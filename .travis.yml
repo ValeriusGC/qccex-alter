@@ -103,9 +103,7 @@ before_deploy:
 deploy:
   - provider: releases
     api_key: 
-        secure: d70a10ae48da549a099f6d3e4e647877f7a11a8f
-#    api_key:
-#        secure: EyOMTm+fzo7rWhRMfROH8/jeJnSFmLFz4pfD/HuFJI2ohayHJOIfASMdg0d7N2cGFS9G7iuPUmQ1S56YC8BSnEefc3lASB1i5hiSOMWJV+lO3N1JBFCWxCBzHc9Hs+XKwHwyhZ5iIYncx+JHPYRNWtUD+A6SZHiZ+sVI48gYMyA=
+        secure: JuD02QSDCFnba3RI/XtYmj8i3oWwlH+i6bGmOpeWdHrk3qagkDutJZGD74Th0dWH5+sbD/1/UP3tYf1Gs5nQZZoxdkFEI1Jm18DCcpSKM0YCkJjzW0c14vnNiYuds2OJvKFZIQki5nCRLL07Lj9xOzNmDkmazioine2yIBH5aWY6Xl3u3GyV2OjAwqIbYIXenv6njncmMUqeszooBgmYHIpGNM1buul23wAYaRNGwcG1T+j4n5vjJSeRWoAAcFo/awqvP2p6t8KhS2H4SwH1pRza505qhUeB8lN7gy7SuUpbf6jg/iqqv9v17EufJjw7pUwyT2xfkgI/vwM3ABR9m3EvwSCdioQEpihRChZynAKApsrp6uQ3agzOt39AUslccXocupNBFHu5Wosu3ReoxLOi35XOCIAWLWON+9xL3rliyfb9p2pYhxVLSi90qLqnOWDrdYW3pvmhbRYWABXn2Qf7p9tpD/Vm4UnTxflnufMYZUKoIM804BGn/xGBU9lnH57Q9iZxA2z6ZH34I4LuNJQ0MiKQbTBobvtCudgyRCSoNhHGf3Bid+D31kWlurc5B47G8puHuogob+v7R1z8AaapgOKLS93xBrLbt8YLFwJ08r8O65+98rGRzA5L5is8c2ZAz2uH/7Gz1V5IInjlxiekU8r+EeIS/Vd4HC2Y1Gg=
     file: qccex-alter333.deb
     skip_cleanup: true
     on:
