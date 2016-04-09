@@ -1,9 +1,9 @@
 [Desktop Entry]
-Name=QOwnNotes
+Name=qccex-alter
 Version=1.0
-Exec=/opt/QOwnNotes/QOwnNotes
+Exec=/opt/qccex-alter/qccex-alter
 Comment=
-Icon=/opt/QOwnNotes/icon.png
+Icon=/opt/qccex-alter/icon.png
 Type=Application
 Terminal=false
 StartupNotify=true
