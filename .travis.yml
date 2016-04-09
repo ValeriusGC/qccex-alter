@@ -72,7 +72,7 @@ before_deploy:
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
          cd ../../../travis
       && dpkg-deb -x qccex-alter.deb build 
-      && mv build/opt/QOwnNotes/ build/opt/qccex-alter/
+#      && mv build/opt/QOwnNotes/ build/opt/qccex-alter/
       && mv ../whole_src/build/release/qccex-alter build/opt/qccex-alter/
       && dpkg -b build qccex-alter333.deb
       ;
