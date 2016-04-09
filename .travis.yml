@@ -67,8 +67,8 @@ script:
   - make
   
 before_deploy:
-  # 16/04/09 new 1.0.7 version
-  - export VERSION_NUMBER=`1.0.7`
+  # 16/04/09 new 1.0.8 version
+  - export VERSION_NUMBER=`1.0.8`
   # create debian package for linux and a disk image for OSX
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
          cd ../../../travis
