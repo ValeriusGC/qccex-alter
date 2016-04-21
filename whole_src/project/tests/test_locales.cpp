@@ -9,6 +9,7 @@ void Test_Locales::testFiles()
     const int cnt = files.count();
     QCOMPARE(cnt, await_cnt);
 
+
     // 2. Verify their locale codes;
     const QVector<QString> names = {"ru", "uk"};
     QCOMPARE(names.count(), await_cnt);

@@ -5,7 +5,7 @@
 # Goal: Get experience in cross-compiling
 #-------------------------------------------------
 
-# Simple informs if correct _QMAKE_CACHE_ is used
+# Simply informs if correct _QMAKE_CACHE_ is used
 message('_QMAKE_CACHE_' for $$_FILE_: $$_QMAKE_CACHE_)
 
 # Adds feature 'minqtversion' for checking minimal reqiured Qt version
@@ -13,8 +13,7 @@ message('_QMAKE_CACHE_' for $$_FILE_: $$_QMAKE_CACHE_)
 CONFIG += minqtversion
 MGS_MIN_QT_VERSION = 5.4.0
 
-QT  += core gui
-QT  += testlib
+QT  += core gui testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 # Where project *.pro is located
