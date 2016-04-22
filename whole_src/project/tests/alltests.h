@@ -1,5 +1,5 @@
-#ifndef AUTOTEST_H
-#define AUTOTEST_H
+#ifndef ALLTESTS_H
+#define ALLTESTS_H
 
 #include <QTest>
 #include <QList>
@@ -67,4 +67,4 @@ public:
         return AutoTest::run(argc, argv); \
     }
 
-#endif // AUTOTEST_H
+#endif // ALLTESTS_H

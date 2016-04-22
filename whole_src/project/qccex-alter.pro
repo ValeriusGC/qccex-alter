@@ -27,24 +27,24 @@ CONFIG += c++11
 # In windows* it is headache. remove this.
 CONFIG -= debug_and_release debug_and_release_target
 
-# For unit-testing
-CONFIG(test) {
-    # This works in mode CONFIG+=test
-    $$t_message(Test build)
-    DEFINES += DO_TESTS
-    TARGET = qccex-test
-    QT += testlib
-    INCLUDEPATH += ./tests
+## For unit-testing
+#CONFIG(test) {
+#    # This works in mode CONFIG+=test
+#    $$t_message(Test build)
+#    DEFINES += DO_TESTS
+#    TARGET = qccex-test
+#    QT += testlib
+#    INCLUDEPATH += ./tests
 
-    SOURCES += $$files(tests/*.cpp)
+#    SOURCES += $$files(tests/*.cpp)
 
-    HEADERS += $$files(tests/*.h)
+#    HEADERS += $$files(tests/*.h)
 
 
-} else {
-    $$t_message(Normal build)
-    DEFINES -= DO_TESTS
-}
+#} else {
+#    $$t_message(Normal build)
+#    DEFINES -= DO_TESTS
+#}
 
 INCLUDEPATH += ./src
 
