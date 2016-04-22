@@ -15,10 +15,18 @@ class Test_Config : public QObject
 {
     Q_OBJECT
 private slots:
-//    void initTestCase();
-    void testWrite();
-//    void cleanupTestCase();
 
+    // Auto-initializator
+    void initTestCase();
+
+    void testWrite();
+
+    // Auto-cleaner
+    void cleanupTestCase();
+
+private:
+    QString m_key;
+    QString m_value;
 };
 
 DECLARE_TEST(Test_Config)
