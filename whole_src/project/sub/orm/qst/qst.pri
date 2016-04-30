@@ -30,7 +30,18 @@
 # -------------------------------------------------
 QT += widgets
 
-message(PWD: $$PWD)
+# path to 'shared'
+INCLUDEPATH *= $$PWD/../../../shared
+SHARED_PATH = $$PWD/../../../shared
+
+HEADERS *= \
+    $$SHARED_PATH/shared_result.h \
+    $$SHARED_PATH/shared_def.h
+
+SOURCES *= \
+    $$SHARED_PATH/shared_result.cpp \
+    $$SHARED_PATH/shared_def.cpp
+
 
 HEADERS += \
 	qst/qstwhere.h \
@@ -129,35 +140,4 @@ SOURCES += \
     qst/special/columnsetting.cpp \
     qst/special/comboboxsettings.cpp \
     qst/querygeneration/framedquery.cpp
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

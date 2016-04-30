@@ -1,6 +1,6 @@
 #include <QHash>
 
-#include "note_defines.h"
+#include "shared_def.h"
 
 #ifdef QT_DEBUG
 

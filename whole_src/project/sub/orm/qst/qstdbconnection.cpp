@@ -25,15 +25,17 @@
 ** author (graninas@gmail.com).
 **
 ****************************************************************************/
+#include <QStringList>
+#include <QDebug>
 
 #include "qstdbconnection.h"
 
-#include <QStringList>
-
-#include <QDebug>
+#include "shared_def.h"
 
 namespace Qst
 {
+
+
 
 /*!
 \class QstDBConnection
@@ -176,14 +178,15 @@ void QstDBConnection::setDriverName(const QString& driverName)
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::connect(const QString &userName,
+BoolResult_t QstDBConnection::connect(const QString &userName,
 							  const QString &password,
 							  const QString &connectionName)
 {
-	if (!test(_connectionSettingsMap[connectionName].hostName(),
-			  _connectionSettingsMap[connectionName].databaseName(),
-			  userName,
-			  password)) return false;
+    BoolResult_t res = test(_connectionSettingsMap[connectionName].hostName(),
+                            _connectionSettingsMap[connectionName].databaseName(),
+                            userName,
+                            password);
+    if (!res.result()) return res;
 
 	setUserName(userName, connectionName);
 	setPassword(password, connectionName);
@@ -210,13 +213,14 @@ bool QstDBConnection::connect(const QString &userName,
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::connect(const QString &hostName,
+BoolResult_t QstDBConnection::connect(const QString &hostName,
 							  const QString &databaseName,
 							  const QString &userName,
 							  const QString &password,
 							  const QString &connectionName)
 {
-	if (!test(hostName, databaseName, userName, password)) return false;
+    BoolResult_t res = test(hostName, databaseName, userName, password);
+    if (!res.result()) return res;
 
 	setHostName(hostName, connectionName);
 	setPort(-1, connectionName);
@@ -247,14 +251,15 @@ bool QstDBConnection::connect(const QString &hostName,
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::connect(const QString &hostName,
+BoolResult_t QstDBConnection::connect(const QString &hostName,
 							  const int &port,
 							  const QString &databaseName,
 							  const QString &userName,
 							  const QString &password,
 							  const QString &connectionName)
 {
-	if (!test(hostName, databaseName, userName, password)) return false;
+    BoolResult_t res = test(hostName, databaseName, userName, password);
+    if (!res.result()) return res;
 
 	setHostName(hostName, connectionName);
 	setPort(port, connectionName);
@@ -283,13 +288,14 @@ bool QstDBConnection::connect(const QString &hostName,
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::connect(const QstConnectionSettings &connectionSettings,
+BoolResult_t QstDBConnection::connect(const QstConnectionSettings &connectionSettings,
 							  const QString &connectionName)
 {
 	_connectionSettingsMap[connectionName] = connectionSettings;
-
-	if (!test(connectionName)) return false;
-
+    BoolResult_t res = test(connectionName);
+    if (!res.result()){
+        return res;
+    }
 	return _open(connectionName);
 }
 
@@ -308,7 +314,7 @@ bool QstDBConnection::connect(const QstConnectionSettings &connectionSettings,
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::test(const QString &hostName,
+BoolResult_t QstDBConnection::test(const QString &hostName,
 						   const int &port,
 						   const QString &databaseName,
 						   const QString &userName,
@@ -335,17 +341,16 @@ bool QstDBConnection::test(const QString &hostName,
 
 		if (!testDB.isOpen())
 		{
-			qDebug() << "Test failed. Error message: " << testDB.lastError().text();
-			return false;
+            LOG_TPFL(QString() << "Test failed. Error message: " << testDB.lastError().text());
+            return {false, testDB.lastError().text()};
 		};
-
-		qDebug() << "Test success.";
+        LOG_TPFL("Test success.");
 
 	testDB.close();
 	}
 
 QSqlDatabase::removeDatabase("TestConnection");
-return true;
+return {true, QString()};
 }
 
 /*!
@@ -365,7 +370,7 @@ return true;
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::test(const QString &hostName,
+BoolResult_t QstDBConnection::test(const QString &hostName,
 						   const QString &databaseName,
 						   const QString &userName,
 						   const QString &password)
@@ -388,7 +393,7 @@ bool QstDBConnection::test(const QString &hostName,
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::test(const QstConnectionSettings &connectionSettings)
+BoolResult_t QstDBConnection::test(const QstConnectionSettings &connectionSettings)
 {
 	return test(connectionSettings.hostName(),
 				connectionSettings.port(),
@@ -412,13 +417,13 @@ bool QstDBConnection::test(const QstConnectionSettings &connectionSettings)
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::test(const QString &connectionName)
+BoolResult_t QstDBConnection::test(const QString &connectionName)
 {
-	return test(_connectionSettingsMap[connectionName].hostName(),
-				_connectionSettingsMap[connectionName].port(),
-				_connectionSettingsMap[connectionName].databaseName(),
-				_connectionSettingsMap[connectionName].userName(),
-				_connectionSettingsMap[connectionName].password());
+    return test(_connectionSettingsMap[connectionName].hostName(),
+                _connectionSettingsMap[connectionName].port(),
+                _connectionSettingsMap[connectionName].databaseName(),
+                _connectionSettingsMap[connectionName].userName(),
+                _connectionSettingsMap[connectionName].password());
 }
 
 /*!
@@ -432,7 +437,7 @@ bool QstDBConnection::test(const QString &connectionName)
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::open(const QString &connectionName)
+BoolResult_t QstDBConnection::open(const QString &connectionName)
 {
 	return _open(connectionName);
 }
@@ -515,7 +520,7 @@ return false;
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::addConnection(const QString &connectionName,
+BoolResult_t QstDBConnection::addConnection(const QString &connectionName,
 									const QString &hostName,
 									const int &port,
 									const QString &databaseName,
@@ -544,7 +549,7 @@ bool QstDBConnection::addConnection(const QString &connectionName,
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::addConnection(const QString &connectionName,
+BoolResult_t QstDBConnection::addConnection(const QString &connectionName,
 									const QstConnectionSettings &connectionSettings)
 {
 	return addConnection(connectionName,
@@ -568,7 +573,7 @@ bool QstDBConnection::addConnection(const QString &connectionName,
 	Returns true on success.
 \endlang
 */
-bool QstDBConnection::addConnection(const QString &connectionName,
+BoolResult_t QstDBConnection::addConnection(const QString &connectionName,
 									const QString &hostName,
 									const QString &databaseName,
 									const QString &userName,
@@ -651,8 +656,9 @@ QstConnectionSettings QstDBConnection::connectionSettings(const QString &connect
 return QstConnectionSettings();
 }
 
-bool QstDBConnection::_open(const QString &connectionName)
+BoolResult_t QstDBConnection::_open(const QString &connectionName)
 {
+    BoolResult_t res = RES_TRUE;
 	{
 	QSqlDatabase db;
 
@@ -681,18 +687,19 @@ bool QstDBConnection::_open(const QString &connectionName)
 
 		if (!db.open())
 		{
+            res = {false, db.lastError().text()};
 			qDebug() << "DB open failed. Error message: " << db.lastError().text();
 		}
 		else
 		{
 			qDebug() << "Success DB open.";
 			qDebug() << "ConnectionName:" << connectionName;
-		return true;
+        return {true, ""};
 		}
 	}
 
 QSqlDatabase::removeDatabase(connectionName);
-return false;
+return res;
 }
 
 bool QstDBConnection::_getSqlDatabase(const QString &connectionName,

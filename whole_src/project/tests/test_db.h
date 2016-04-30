@@ -22,6 +22,9 @@ private slots:
 
     // Auto-cleaner
     void cleanupTestCase();
+
+private:
+    QString m_dbName;
 };
 
 DECLARE_TEST(Test_DB)

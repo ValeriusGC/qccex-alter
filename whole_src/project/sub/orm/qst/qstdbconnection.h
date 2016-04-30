@@ -40,6 +40,7 @@
 
 #include "qstglobal.h"
 #include "qstconnectionsettings.h"
+#include "shared_result.h"
 
 namespace Qst
 {
@@ -75,60 +76,60 @@ public:
 
 	void setDriverName(const QString& driverName);
 
-	bool connect(const QString &userName,
+    BoolResult_t connect(const QString &userName,
 				 const QString &password,
 				 const QString &connectionName = QString());
 
-	bool connect(const QString &hostName,
+    BoolResult_t connect(const QString &hostName,
 				 const QString &databaseName,
 				 const QString &userName,
 				 const QString &password,
 				 const QString &connectionName = QString());
 
-	bool connect(const QString &hostName,
+    BoolResult_t connect(const QString &hostName,
 				 const int &port,
 				 const QString &databaseName,
 				 const QString &userName,
 				 const QString &password,
 				 const QString &connectionName = QString());
 
-	bool connect(const QstConnectionSettings &connectionSettings,
+    BoolResult_t connect(const QstConnectionSettings &connectionSettings,
 				 const QString &connectionName = QString());
 
-	bool test(const QString &hostName,
+    BoolResult_t test(const QString &hostName,
 			  const int &port,
 			  const QString &databaseName,
 			  const QString &userName,
 			  const QString &password);
 
-	bool test(const QString &hostName,
+    BoolResult_t test(const QString &hostName,
 			  const QString &databaseName,
 			  const QString &userName,
 			  const QString &password);
-	bool test(const QstConnectionSettings &connectionSettings);
+    BoolResult_t test(const QstConnectionSettings &connectionSettings);
 
-	bool test(const QString &connectionName = QString());	
+    BoolResult_t test(const QString &connectionName = QString());
 
-	bool open(const QString &connectionName = QString());
+    BoolResult_t open(const QString &connectionName = QString());
 	void close(const QString &connectionName = QString());
 	void closeAll();
 
 	bool isOpen(const QString &connectionName = QString()) const;
 
-	bool addConnection(const QString &connectionName,
+    BoolResult_t addConnection(const QString &connectionName,
 					   const QString &hostName,
 					   const int &port,
 					   const QString &databaseName,
 					   const QString &userName,
 					   const QString &password);
 
-	bool addConnection(const QString &connectionName,
+    BoolResult_t addConnection(const QString &connectionName,
 					   const QString &hostName,
 					   const QString &databaseName,
 					   const QString &userName,
 					   const QString &password);
 
-	bool addConnection(const QString &connectionName,
+    BoolResult_t addConnection(const QString &connectionName,
 					   const QstConnectionSettings &connectionSettings);
 
 	void removeConnection(const QString &connectionName);
@@ -140,7 +141,7 @@ public:
 
 private:
 
-	bool _open(const QString &connectionName = QString());
+    BoolResult_t _open(const QString &connectionName = QString());
 
 
 	bool _getSqlDatabase(const QString &connectionName,

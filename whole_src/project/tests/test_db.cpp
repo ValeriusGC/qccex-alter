@@ -8,9 +8,13 @@ using namespace vfx_shared;
 
 void Test_DB::initTestCase()
 {
+    m_dbName = "testDB.db";
+    // Create test-BD with particular version
     QstDBConnection conn;
     conn.setDriverName("QSQLITE");
-    const BoolResult_t res = RES_TRUE;
+    conn.setDatabaseName(m_dbName);
+    const BoolResult_t res = conn.test();
+    QVERIFY2(res.result(), res.message().toLatin1());
 }
 
 void Test_DB::testVersion()
@@ -20,5 +24,5 @@ void Test_DB::testVersion()
 
 void Test_DB::cleanupTestCase()
 {
-
+    // Remove test-BD with particular version
 }
