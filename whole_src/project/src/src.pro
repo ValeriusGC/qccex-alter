@@ -5,7 +5,7 @@
 # Goal: Get experience in cross-compiling
 #-------------------------------------------------
 
-# Simple informs if correct _QMAKE_CACHE_ is used
+# Simply informs if correct _QMAKE_CACHE_ is used
 message('_QMAKE_CACHE_' for $$_FILE_: $$_QMAKE_CACHE_)
 
 # Adds feature 'minqtversion' for checking minimal reqiured Qt version
@@ -13,56 +13,51 @@ message('_QMAKE_CACHE_' for $$_FILE_: $$_QMAKE_CACHE_)
 CONFIG += minqtversion
 MGS_MIN_QT_VERSION = 5.4.0
 
-QT       += core gui
-
+QT  *= core gui sql testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = qccex-alter
-TEMPLATE = app
+# Where project *.pro is located
+PROJECT_ROOT = $$PWD/
 
+# including sub-module with my ORM
+include(src/orm/orm.pro)
+INCLUDEPATH *= ./src/orm
+# $$t_message(INCLUDEPATH: $$INCLUDEPATH)
+
+TARGET = qccex-alter_tests
+TEMPLATE = app
+# Can be used in code to check if we in TEST_MODE
+DEFINES += DO_TESTS
+INCLUDEPATH *= ./tests ./src
+
+
+SOURCES += $$files(tests/*.cpp) \
+            src/settings.cpp \
+            src/note_defines.cpp
+
+HEADERS += $$files(tests/*.h) \
+            src/settings.h  \
+            src/note_defines.h
+
+CONFIG += debug
 # nullptr and other new C++ features
 CONFIG += c++11
 
 # In windows* it is headache. remove this.
 CONFIG -= debug_and_release debug_and_release_target
 
-## For unit-testing
-#CONFIG(test) {
-#    # This works in mode CONFIG+=test
-#    $$t_message(Test build)
-#    DEFINES += DO_TESTS
-#    TARGET = qccex-test
-#    QT += testlib
-#    INCLUDEPATH += ./tests
-
-#    SOURCES += $$files(tests/*.cpp)
-
-#    HEADERS += $$files(tests/*.h)
-
-
-#} else {
-#    $$t_message(Normal build)
-#    DEFINES -= DO_TESTS
-#}
-
-INCLUDEPATH += ./src
-
 DEFINES += PROGRAM_VERSION=\\\"$$VERSION\\\"
 DEFINES += PROFILE_DIR=\\\"$$_PRO_FILE_PWD_\\\"
 DEFINES += TARGET_BASE_NAME=\\\"$$TARGET_BASE\\\"
-
 
 OBJECTS_DIR = build
 UI_DIR = build
 MOC_DIR = build
 RCC_DIR = build
 
-# including sub-module with QsT ORM
-include(qst/qst.pri)
-
-SOURCES += $$files(src/*.cpp)
-
-HEADERS  += $$files(src/*.h)
+# Where one should place binary
+release: DESTDIR = $$PROJECT_ROOT/../build/tests
+debug:   DESTDIR = $$PROJECT_ROOT/../build/tests
 
 RESOURCES += \
     qccex-alter.qrc \
@@ -71,11 +66,6 @@ RESOURCES += \
 #-----------------------------------------------------------------------------------------------------------------------
 #   Generates RESOURCES for *.QM
 CONFIG += my_translations
-
-# Adds system strings localization
-QT_QM = \
-        $$[QT_INSTALL_TRANSLATIONS]/qt*_ru.qm \
-        $$[QT_INSTALL_TRANSLATIONS]/qt*_uk.qm
 
 TRANSLATIONS = \
                 locale/qccex_ru.ts \
