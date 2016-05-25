@@ -1,4 +1,5 @@
 !isEmpty(TRANSLATIONS): contains(RESOURCES, translations.qrc) {
+    $$t_message(my_translations.prf: _PRO_FILE_PWD_: $$_PRO_FILE_PWD_)
   # создаю каталог transactions для хранения .qm файлов
   mkpath($$_PRO_FILE_PWD_/translations)
   # Проверяю, что значение переменной TRANSLATIONS поменялось
