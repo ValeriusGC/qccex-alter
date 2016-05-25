@@ -2,8 +2,8 @@
 
 #include "widget.h"
 
-#include "note_defines.h"
-
+#include "shared/shared_def.h"
+using namespace vfx_shared;
 
 #ifdef DO_TESTS
     #include "alltests.h"

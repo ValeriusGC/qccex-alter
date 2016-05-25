@@ -7,7 +7,7 @@
 
 TEMPLATE = subdirs
 SUBDIRS +=  \
-           sub/orm \
+#           sub/orm \
            tests
 CONFIG += ordered
 

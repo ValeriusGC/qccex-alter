@@ -5,10 +5,11 @@
 
 #include "widget.h"
 #include "settings.h"
-#include "note_defines.h"
 #include "version.h"
+#include "shared/shared_def.h"
 
 using namespace nq;
+using namespace vfx_shared;
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)

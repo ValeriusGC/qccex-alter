@@ -9,9 +9,10 @@
 #include <QDirIterator>
 
 #include "settings.h"
-#include "note_defines.h"
+#include "shared_def.h"
 
 using namespace nq;
+using namespace vfx_shared;
 
 /**
  * @brief getFileName

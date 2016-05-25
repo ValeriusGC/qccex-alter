@@ -45,7 +45,7 @@ CONFIG -= debug_and_release debug_and_release_target
 #    DEFINES -= DO_TESTS
 #}
 
-INCLUDEPATH += ./src
+INCLUDEPATH += ./src ./shared
 
 DEFINES += PROGRAM_VERSION=\\\"$$VERSION\\\"
 DEFINES += PROFILE_DIR=\\\"$$_PRO_FILE_PWD_\\\"
@@ -58,11 +58,16 @@ MOC_DIR = build
 RCC_DIR = build
 
 # including sub-module with QsT ORM
-include(qst/qst.pri)
+# include(qst/qst.pri)
 
-SOURCES += $$files(src/*.cpp)
+SOURCES += \
+    $$files(src/*.cpp) \
+    shared/shared_def.cpp
 
-HEADERS  += $$files(src/*.h)
+
+HEADERS  += \
+    $$files(src/*.h) \
+    shared/shared_def.cpp
 
 RESOURCES += \
     qccex-alter.qrc \

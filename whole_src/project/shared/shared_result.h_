@@ -33,13 +33,13 @@ namespace vfx_shared {
  *  r1 = {false, "message"};
  *
  */
-template<typename R, typename D = QString>
+template<typename R, typename M = QString>
 class Result
 {
 public:
-    Result(R result, const D& data) {
+    Result(R result, const M& message) {
         r = result;
-        d = data;
+        m = message;
 #ifdef QT_DEBUG
         ++debugCounters[0];
 #endif
@@ -47,7 +47,7 @@ public:
 
     Result(const Result& result) {
         r = result.r;
-        d = result.d;
+        m = result.m;
 #ifdef QT_DEBUG
         ++debugCounters[1];
 #endif
@@ -66,7 +66,7 @@ public:
 
     Result& operator=(const Result& result){
         this->r = result.r;
-        this->d = result.d;
+        this->m = result.m;
         return *this;
     }
 
@@ -79,13 +79,13 @@ public:
         return r;
     }
 
-    D data() const {
-        return d;
+    M message() const {
+        return m;
     }
 
 private:
     R r;
-    D d;
+    M m;
 };
 
 /**
@@ -94,8 +94,8 @@ private:
  *  ...
  *  if(r1 == true) ...
  */
-template<typename R, typename D>
-bool operator==(const Result<R, D>& lhs, bool rhs){
+template<typename R, typename M>
+bool operator==(const Result<R, M>& lhs, bool rhs){
     return lhs.result()==rhs;
 }
 
@@ -105,8 +105,8 @@ bool operator==(const Result<R, D>& lhs, bool rhs){
  *  ...
  *  if(r1 != true)...
  */
-template<typename R, typename D>
-bool operator!=(const Result<R, D>& lhs, bool rhs){
+template<typename R, typename M>
+bool operator!=(const Result<R, M>& lhs, bool rhs){
     return lhs.result()!=rhs;
 }
 

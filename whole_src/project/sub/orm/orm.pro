@@ -9,4 +9,3 @@ CONFIG += c++11
 
 include(qst/qst.pri)
 
-#message(PWD: $$PWD)

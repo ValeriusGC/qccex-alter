@@ -1,18 +1,17 @@
 #ifndef SHARED_DEF
 #define SHARED_DEF
 
-//======================================================================================================================
-// Debug stuff
-
-#ifdef QT_DEBUG
-
 #include <QTime>
 #include <QDebug>
 #include <QHash>
 #include <QObject>
 
+//======================================================================================================================
+// Debug stuff
 
 namespace vfx_shared {
+
+#ifdef QT_DEBUG
 
 // Helper for LOG-defines
 #define _T QTime::currentTime().toString(QString("hh:mm:ss.zzz"))
@@ -77,11 +76,8 @@ QHash<QString, QString> &g_objMap();
 // ~Memory leak control
 //----------------------------------------------------------------------------------------------------------------------
 
-}
 
 #else
-
-namespace vxf_shared {
 
 // Stub - helper for LOG-defines
 #define _T
@@ -98,10 +94,10 @@ namespace vxf_shared {
 #define DEC_THIS(show)
 #define CHECK_PTR
 
-} // vxf_shared
 
 #endif
 
+} // vxf_shared
 
 // ~Debug stuff
 //======================================================================================================================

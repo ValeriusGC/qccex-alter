@@ -2,36 +2,36 @@
 #define ALLTESTS_H
 
 #include <QTest>
-#include <QList>
+#include <QMap>
 #include <QString>
 #include <QSharedPointer>
 
 namespace AutoTest{
 
-typedef QList<QObject*> TestList;
+typedef QMap<QString, QObject*> TestList;
 
 inline TestList& testList() {
     static TestList list;
     return list;
 }
 
-inline bool findObject(QObject* object) {
+inline bool findObject(const QString &name) {
     TestList& list = testList();
-    if (list.contains(object)) {
+    if (list.contains(name)) {
         return true;
     }
-    foreach (QObject* test, list) {
-        if (test->objectName() == object->objectName()) {
-            return true;
-        }
-    }
+//    foreach (QObject* test, list) {
+//        if (test->objectName() == object->objectName()) {
+//            return true;
+//        }
+//    }
     return false;
 }
 
-inline void addTest(QObject* object) {
+inline void addTest(const QString &name, QObject* object) {
     TestList& list = testList();
-    if (!findObject(object)) {
-        list.append(object);
+    if (!findObject(name)) {
+        list.insert(name, object);
     }
 }
 
@@ -40,7 +40,6 @@ inline int run(int argc, char *argv[]) {
     foreach (QObject* test, testList()) {
         ret += QTest::qExec(test, argc, argv);
     }
-
     return ret;
 }
 
@@ -52,9 +51,12 @@ class Test
 public:
     QSharedPointer<T> child;
 
-    Test(const QString& name) : child(new T) {
-        child->setObjectName(name);
-        AutoTest::addTest(child.data());
+    Test(const QString& name) {
+        if(!AutoTest::findObject(name)) {
+            child.reset(new T);
+            child->setObjectName(name);
+            AutoTest::addTest(name, child.data());
+        }
     }
 };
 

@@ -13,8 +13,13 @@ message('_QMAKE_CACHE_' for $$_FILE_: $$_QMAKE_CACHE_)
 CONFIG += minqtversion
 MGS_MIN_QT_VERSION = 5.4.0
 
-QT  *= core gui sql testlib
+QT  *= core
+QT  *= gui
+QT  *= sql
+QT  *= testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+
 
 # Where project *.pro is located
 PROJECT_ROOT = $$PWD/..
@@ -25,20 +30,51 @@ TEMPLATE = app
 DEFINES += DO_TESTS
 INCLUDEPATH *= $$PROJECT_ROOT/src
 INCLUDEPATH *= $$PROJECT_ROOT/shared
-INCLUDEPATH *= $$PROJECT_ROOT/sub/orm
+#INCLUDEPATH *= $$PROJECT_ROOT/sub/orm
 
 # It can be found not in relative PRO-dir, but relative to build dir
-LIBS += -L../sub/orm -lorm
+#LIBS += -L../sub/orm -lorm
 
-SOURCES += $$files(*.cpp) \
+SOURCES *= $$files(*.cpp) \
             ../src/settings.cpp \
+            ../shared/dbmanager.cpp \
             ../shared/shared_result.cpp \
-            ../shared/shared_def.cpp
+            ../shared/shared_def.cpp \
+    ../shared/base_storage.cpp \
+    ../shared/storage_globals.cpp \
+    ../shared/sqlitestorage.cpp \
+    test_sqlitestorage.cpp \
+    ../shared/base_table.cpp \
+    ../shared/sqlite_storage_v1.cpp \
+    ../shared/sqlite_storage_v2.cpp \
+    ../shared/sqlite_storage_v3.cpp \
+    ../shared/note.cpp \
+    ../shared/author.cpp \
+    test_records.cpp \
+    ../shared/taskgetnotes.cpp \
+    ../shared/basemodelitemlist.cpp
 
-HEADERS += $$files(*.h) \
+HEADERS *= $$files(*.h) \
             ../src/settings.h  \
+            ../shared/dbmanager.h \
             ../shared/shared_result.h \
-            ../shared/shared_def.h
+            ../shared/shared_def.h \
+            ../shared/sb_def.h \
+    ../shared/istorageversioner.h \
+    ../shared/itable.h \
+    ../shared/base_storage.h \
+    ../shared/storage_globals.h \
+    ../shared/sqlitestorage.h \
+    test_sqlitestorage.h \
+    ../shared/base_table.h \
+    ../shared/sqlite_storage_v1.h \
+    ../shared/sqlite_storage_v2.h \
+    ../shared/sqlite_storage_v3.h \
+    ../shared/note.h \
+    ../shared/author.h \
+    test_records.h \
+    ../shared/taskgetnotes.h \
+    ../shared/basemodelitemlist.h
 
 CONFIG += debug
 # nullptr and other new C++ features

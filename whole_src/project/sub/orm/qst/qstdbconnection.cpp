@@ -691,9 +691,10 @@ BoolResult_t QstDBConnection::_open(const QString &connectionName)
 			qDebug() << "DB open failed. Error message: " << db.lastError().text();
 		}
 		else
-		{
+        {
+            bool bb = db.isOpen();
 			qDebug() << "Success DB open.";
-			qDebug() << "ConnectionName:" << connectionName;
+            qDebug() << "ConnectionName:" << bb << connectionName;
         return {true, ""};
 		}
 	}
