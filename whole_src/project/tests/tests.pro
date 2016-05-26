@@ -6,7 +6,7 @@
 #-------------------------------------------------
 
 # Simply informs if correct _QMAKE_CACHE_ is used
-message('_QMAKE_CACHE_' for $$_FILE_: $$_QMAKE_CACHE_)
+$$t_message($$_FILE_[_QMAKE_CACHE_]: $$_QMAKE_CACHE_)
 
 # Adds feature 'minqtversion' for checking minimal reqiured Qt version
 # Let's 5.4.0 for example )
@@ -19,10 +19,10 @@ QT  *= sql
 QT  *= testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-
-
 # Where project *.pro is located
 PROJECT_ROOT = $$PWD/..
+$$t_message($$_FILE_[!!!START!!!])
+$$t_message($$_FILE_[PROJECT_ROOT]: $$PROJECT_ROOT)
 
 TARGET = qccex-alter_tests
 TEMPLATE = app
@@ -97,13 +97,18 @@ release: DESTDIR = $$PROJECT_ROOT/../../build/tests
 debug:   DESTDIR = $$PROJECT_ROOT/../../build/tests
 
 RESOURCES += \
-    $$PROJECT_ROOT/qccex-alter.qrc \
+#    qccex-alter.qrc \
     $$PROJECT_ROOT/translations.qrc
 
 #-----------------------------------------------------------------------------------------------------------------------
 #   Generates RESOURCES for *.QM
 CONFIG += my_translations
 
+# Adds system strings localization
+QT_QM = \
+        $$[QT_INSTALL_TRANSLATIONS]/qt*_ru.qm \
+        $$[QT_INSTALL_TRANSLATIONS]/qt*_uk.qm
+
 TRANSLATIONS = \
-                $$PROJECT_ROOT/locale/qccex_ru.ts \
-                $$PROJECT_ROOT/locale/qccex_uk.ts
+                locale/qccex_ru.ts \
+                locale/qccex_uk.ts

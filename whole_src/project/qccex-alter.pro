@@ -8,6 +8,8 @@
 # Simple informs if correct _QMAKE_CACHE_ is used
 message('_QMAKE_CACHE_' for $$_FILE_: $$_QMAKE_CACHE_)
 
+PROJECT_ROOT = $$PWD
+
 # Adds feature 'minqtversion' for checking minimal reqiured Qt version
 # Let's 5.4.0 for example )
 CONFIG += minqtversion
