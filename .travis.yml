@@ -47,7 +47,7 @@ script:
   - qmake ./qccex-alter_tests.pro && make -s -j 2
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
       if [ "${TRAVIS_BRANCH}" != "master" ]; then
-           ./../build/tests/qccex-alter_tests -platform minimal -txt
+           ./../../build/tests/qccex-alter_tests -platform minimal -txt
         ;
       fi
       ;
