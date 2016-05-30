@@ -4,6 +4,8 @@
 #include "sqlitestorage.h"
 #include "storage_globals.h"
 #include "note.h"
+#include "notemodel.h"
+#include "authormodel.h"
 
 // Include all old versions to make upgrade
 #include "sqlite_storage_v1.h"
@@ -37,29 +39,29 @@ BoolVariantResult_t SqliteStorage::tables() const
     return {true, db.tables()};
 }
 
-AuthorListResult_t SqliteStorage::getAuthors() const
-{
-    DbHelper dbh(name());
-    QSqlDatabase db = dbh.db();
-    if(!db.isOpen()){
-        return {nullptr, dbh.lastError()};
-    }
+//AuthorListResult_t SqliteStorage::getAuthors() const
+//{
+//    DbHelper dbh(name());
+//    QSqlDatabase db = dbh.db();
+//    if(!db.isOpen()){
+//        return {nullptr, dbh.lastError()};
+//    }
 
-    QSqlQuery q(db);
-    q.prepare(QString("SELECT * FROM %1").arg(TableAuthor::TBL_NAME));
-    if(!q.exec()) {
-        return {nullptr, q.lastError().text()};
-    }
+//    QSqlQuery q(db);
+//    q.prepare(QString("SELECT * FROM %1").arg(TableAuthor::TBL_NAME));
+//    if(!q.exec()) {
+//        return {nullptr, q.lastError().text()};
+//    }
 
-    model::AuthorList *items = new model::AuthorList;
-    while (q.next()) {
-        Author *item = new Author;
-        item->setId(q.value(TableAuthor::FLD_ID).toInt());
-        item->setTitle(q.value(TableAuthor::FLD_TITLE).toString());
-        items->data().append(item);
-    }
-    return {items, ""};
-}
+//    model::AuthorList *items = new model::AuthorList;
+//    while (q.next()) {
+//        Author *item = new Author;
+//        item->setId(q.value(TableAuthor::FLD_ID).toInt());
+//        item->setTitle(q.value(TableAuthor::FLD_TITLE).toString());
+//        items->data().append(item);
+//    }
+//    return {items, ""};
+//}
 
 void SqliteStorage::doCreateItems()
 {
@@ -258,7 +260,7 @@ void SqliteStorage::doFetchNotes(qint64 id)
 //        emit fireTaskProgress({id, ProgressInfo::TPS_Error, 0, max, max, q.lastError().text()}, QSharedPointer<QObject>());
     }
 
-    model::NoteList *notes = new model::NoteList;
+    model::NoteModel *notes = new model::NoteModel;
     while (q.next()) {
         qint32 fk_auth = q.value(TableNote::FLD_FK_AUTHOR).toInt();
         qint32 id = q.value(TableNote::FLD_ID).toInt();
@@ -266,7 +268,7 @@ void SqliteStorage::doFetchNotes(qint64 id)
         note->setId(id);
         note->setAuthorId(fk_auth);
         note->setText(q.value(TableNote::FLD_TEXT).toString());
-        notes->data().append(note);
+        notes->items().append(note);
     }
     emit fireTaskProgress({id, ProgressInfo::TPS_Success, 0, max, max, "ok"}, QVariant::fromValue(QSharedPointer<QObject>(notes)));
 //    emit fireTaskProgress({id, ProgressInfo::TPS_Success, 0, max, max, "ok"}, QSharedPointer<QObject>(notes));
@@ -295,10 +297,10 @@ void SqliteStorage::doClearNotes(qint64 id)
 
 void SqliteStorage::doAddNotes(qint64 id, const QSharedPointer<QObject> &notes)
 {
-    QSharedPointer<NoteList> spnl = qSharedPointerDynamicCast<NoteList>(notes);
-    const qint32 cnt = spnl->data().count();
+    QSharedPointer<NoteModel> spnl = qSharedPointerDynamicCast<NoteModel>(notes);
+    const qint32 cnt = spnl->items().count();
     if(cnt == 0) {
-        emit fireTaskProgress({id, ProgressInfo::TPS_Error, 0, 0, 0, tr("Empty list of notes", "DB")},
+        emit fireTaskProgress({id, ProgressInfo::TPS_Error, 0, 0, 0, tr("Empty list of notes", "view->setCurrentIndex(fsModel->index(0, 0));DB")},
                               QVariant());
         return;
     }
@@ -332,7 +334,7 @@ void SqliteStorage::doAddNotes(qint64 id, const QSharedPointer<QObject> &notes)
         qint32 errors = 0;
         qint64 ts = QDateTime::currentMSecsSinceEpoch();
         for(int i=0; i<cnt; ++i) {
-            Note *note = spnl->data().at(i);
+            Note *note = spnl->items().at(i);
             q.addBindValue(note->text());
             q.addBindValue(note->authorId());
             q.addBindValue(ts);
@@ -380,7 +382,7 @@ void SqliteStorage::doFetchAuthors(qint64 id)
         return;
     }
 
-    model::AuthorList *items = new model::AuthorList;
+    model::AuthorModel *items = new model::AuthorModel;
     while (q.next()) {
         Author *item = new Author;
         item->setId(q.value(TableAuthor::FLD_ID).toInt());

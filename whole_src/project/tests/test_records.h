@@ -5,7 +5,9 @@
 
 #include "alltests.h"
 #include "sqlitestorage.h"
-#include "note.h"
+#include "notemodel.h"
+#include "progressinfo.h"
+using namespace nq;
 
 using namespace storage;
 
@@ -47,7 +49,7 @@ private:
 
     SqliteStorage *m_storage;
 
-    NoteList *m_notes;
+    model::NoteModel *m_notes;
 };
 
 DECLARE_TEST(TestRecords)

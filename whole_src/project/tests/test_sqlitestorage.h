@@ -5,8 +5,12 @@
 #include <QSignalSpy>
 
 #include "alltests.h"
+#include "progressinfo.h"
+using namespace nq;
 #include "storage_globals.h"
 #include "sqlitestorage.h"
+
+using namespace storage;
 
 class TestSqliteStorage : public QObject
 {

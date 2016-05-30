@@ -3,6 +3,9 @@
 
 #include <QWidget>
 
+#include "progressinfo.h"
+using namespace nq;
+
 QT_BEGIN_NAMESPACE
 class QSignalMapper;
 class QPushButton;
@@ -18,15 +21,29 @@ public:
     Widget(QWidget *parent = 0);
     ~Widget();
 
+protected:
+    void focusInEvent(QFocusEvent * event);
+
 private slots:
     void buttonClicked(QWidget *sender);
+    void fireInitProgress(const ProgressInfo &pi);
+
 
 private:
     QSignalMapper *m_signalMapper;
 
     QVector<QPushButton*> m_buttons;
 
+    void setupUi();
+
     void retranslateUi();
+
+    void createTestButtons(QWidget *parent);
+
+    void createNotePanel(QWidget *parent);
+
+    void init();
+
 };
 
 #endif // WIDGET_H

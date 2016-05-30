@@ -32,34 +32,34 @@ private:
     QString m_title;
 };
 
-class AuthorList : public BaseModelItemList {
-    Q_OBJECT
-    typedef BaseModelItemList Inherited_t;
-public:
-    explicit AuthorList(QObject *parent = 0) : Inherited_t(parent){
-        INC_THIS(true);
-    }
+//class AuthorList : public BaseModelItemList {
+//    Q_OBJECT
+//    typedef BaseModelItemList Inherited_t;
+//public:
+//    explicit AuthorList(QObject *parent = 0) : Inherited_t(parent){
+//        INC_THIS(true);
+//    }
 
-    ~AuthorList(){
-        foreach (auto item, m_items) {
-            delete item;
-        }
-        DEC_THIS(true);
-    }
+//    ~AuthorList(){
+//        foreach (auto item, m_items) {
+//            delete item;
+//        }
+//        DEC_THIS(true);
+//    }
 
-    QList<Author*> &data() {
-        return m_items;
-    }
+//    QList<Author*> &data() {
+//        return m_items;
+//    }
 
-private:
-    QList<Author*> m_items;
+//private:
+//    QList<Author*> m_items;
 
-};
+//};
 
-typedef Result<AuthorList*, QString> AuthorListResult_t;
+//typedef Result<AuthorList*, QString> AuthorListResult_t;
 
 } // namespace model;
 
-Q_DECLARE_METATYPE(model::AuthorList*)
+//Q_DECLARE_METATYPE(model::AuthorList*)
 
 #endif // AUTHOR_H

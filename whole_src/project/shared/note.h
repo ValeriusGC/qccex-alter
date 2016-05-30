@@ -38,44 +38,44 @@ private:
     QString m_text;
 };
 
-class NoteList : public BaseModelItemList {
-    Q_OBJECT
-    typedef BaseModelItemList Inherited_t;
-public:
+//class NoteList : public BaseModelItemList {
+//    Q_OBJECT
+//    typedef BaseModelItemList Inherited_t;
+//public:
 
-    explicit NoteList(QObject *parent = 0) : Inherited_t(parent){
-        INC_THIS(true);
-    }
+//    explicit NoteList(QObject *parent = 0) : Inherited_t(parent){
+//        INC_THIS(true);
+//    }
 
-    ~NoteList(){
-        foreach (auto item, m_items) {
-            delete item;
-        }
-        DEC_THIS(true);
-    }
+//    ~NoteList(){
+//        foreach (auto item, m_items) {
+//            delete item;
+//        }
+//        DEC_THIS(true);
+//    }
 
-    QList<Note*> &data() {
-        return m_items;
-    }
+//    QList<Note*> &data() {
+//        return m_items;
+//    }
 
-private:
-    QList<Note*> m_items;
+//private:
+//    QList<Note*> m_items;
 
-};
+//};
 
-typedef Result<NoteList*, QString> NoteListResult_t;
+//typedef Result<NoteList*, QString> NoteListResult_t;
 
-class TaskGetNoteList {
-public:
-private:
-    qint64 m_id;
-    QSharedPointer<NoteList> m_p;
-};
+//class TaskGetNoteList {
+//public:
+//private:
+//    qint64 m_id;
+//    QSharedPointer<NoteList> m_p;
+//};
 
 } // namespace model;
 
 //Q_DECLARE_METATYPE(model::NoteList)
-Q_DECLARE_METATYPE(model::NoteList*)
+//Q_DECLARE_METATYPE(model::NoteList*)
 //Q_DECLARE_METATYPE(model::Note*)
 
 

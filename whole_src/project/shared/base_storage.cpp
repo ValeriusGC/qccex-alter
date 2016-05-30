@@ -3,6 +3,9 @@
 #include "base_storage.h"
 #include "storage_globals.h"
 
+using namespace storage;
+using nq::ProgressInfo;
+
 const qint32 BaseStorage::NEW_VERSION = storage::STORAGE_CURR_VER;
 
 BaseStorage::BaseStorage(QObject *parent)

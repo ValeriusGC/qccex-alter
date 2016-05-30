@@ -15,7 +15,7 @@ PROJECT_ROOT = $$PWD
 CONFIG += minqtversion
 MGS_MIN_QT_VERSION = 5.4.0
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -64,12 +64,34 @@ RCC_DIR = build
 
 SOURCES += \
     $$files(src/*.cpp) \
-    shared/shared_def.cpp
+    shared/shared_def.cpp \
+    shared/notemodel.cpp  \
+    shared/note.cpp \
+    shared/sqlitestorage.cpp \
+    shared/base_storage.cpp \
+    shared/sqlite_storage_v3.cpp \
+    shared/author.cpp \
+    shared/authormodel.cpp\
+    shared/shared_result.cpp \
+    shared/storage_globals.cpp \
+    shared/storagefactory.cpp \
+    shared/progressinfo.cpp
 
 
 HEADERS  += \
     $$files(src/*.h) \
-    shared/shared_def.cpp
+    shared/shared_def.cpp \
+    shared/notemodel.h \
+    shared/note.h \
+    shared/storage_globals.h \
+    shared/sqlitestorage.h \
+    shared/base_storage.h \
+    shared/sqlite_storage_v3.h \
+    shared/author.h \
+    shared/authormodel.h \
+    shared/shared_result.h \
+    shared/storagefactory.h \
+    shared/progressinfo.h
 
 RESOURCES += \
     qccex-alter.qrc \

@@ -2,6 +2,9 @@
 #include <QSqlDriver>
 #include <QString>
 
+#include "notemodel.h"
+#include "authormodel.h"
+
 #include "test_sqlitestorage.h"
 #include "test_common_defs.h"
 #include "sqlite_storage_v1.h"
@@ -22,8 +25,8 @@ using namespace storage;
 
 void TestSqliteStorage::initTestCase()
 {
-    qRegisterMetaType<ProgressInfo>();
-    qRegisterMetaType<model::NoteList*>();
+    qRegisterMetaType<nq::ProgressInfo>();
+    qRegisterMetaType<model::NoteModel*>();
     //m_dbName = "TestSqliteStorage.db";
     m_initTime = 20;
     m_dbName = test::TEST_DB_NAME;
@@ -53,7 +56,7 @@ void TestSqliteStorage::testCreateV3()
 {
     // 1.
     m_storage = new SqliteStorage();
-    QSignalSpy spy(m_storage, SIGNAL(fireInitProgress(ProgressInfo)));
+    QSignalSpy spy(m_storage, SIGNAL(fireInitProgress(nq::ProgressInfo)));
     //m_spies.append(new QSignalSpy(m_storage, SIGNAL(fireInitProgress(ProgressInfo))));
     QVERIFY2(m_storage->isInit()==false, "Check isInit before init()");
 
@@ -95,7 +98,7 @@ void TestSqliteStorage::testUpgradeV1V3()
     QVERIFY2(v1Created.result(), v1Created.data().toString().toLatin1());
 
     m_storage = new SqliteStorage();
-    QSignalSpy spy(m_storage, SIGNAL(fireInitProgress(ProgressInfo)));
+    QSignalSpy spy(m_storage, SIGNAL(fireInitProgress(nq::ProgressInfo)));
     m_storage->init(m_dbName);
     // Wait some time for initialization
     QTest::qWait(m_initTime);
@@ -126,7 +129,7 @@ void TestSqliteStorage::testUpgradeV1V3()
 //    return {false, v};
 
     {
-        QSignalSpy spyTask(m_storage, SIGNAL(fireTaskProgress(ProgressInfo,QVariant)));
+        QSignalSpy spyTask(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
         const qint64 id = QDateTime::currentMSecsSinceEpoch();
         m_storage->fetchNotes(id);
         QTest::qWait(m_initTime);
@@ -136,9 +139,9 @@ void TestSqliteStorage::testUpgradeV1V3()
         QCOMPARE(pi.id, id);
         QSharedPointer<QObject> sp = arguments.at(1).value< QSharedPointer<QObject> >();
         QVERIFY(sp);
-        QSharedPointer<NoteList> spnl = qSharedPointerDynamicCast<NoteList>(sp);
+        QSharedPointer<NoteModel> spnl = qSharedPointerDynamicCast<NoteModel>(sp);
         QVERIFY(spnl);
-        QCOMPARE(spnl->data().count(), 3);
+        QCOMPARE(spnl->items().count(), 3);
     }
 }
 
@@ -151,7 +154,7 @@ void TestSqliteStorage::testUpgradeV2V3()
     QVERIFY2(v2Created.result(), v2Created.data().toString().toLatin1());
 
     m_storage = new SqliteStorage();
-    QSignalSpy spy(m_storage, SIGNAL(fireInitProgress(ProgressInfo)));
+    QSignalSpy spy(m_storage, SIGNAL(fireInitProgress(nq::ProgressInfo)));
     m_storage->init(m_dbName);
     // Wait some time for initialization
     QTest::qWait(m_initTime);
@@ -174,7 +177,7 @@ void TestSqliteStorage::testUpgradeV2V3()
     QVERIFY(tables.contains(storage::sqlite::v3::TableTagsNotes::TBL_NAME));
 
     {
-        QSignalSpy spyTask(m_storage, SIGNAL(fireTaskProgress(ProgressInfo,QVariant)));
+        QSignalSpy spyTask(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
         const qint64 id = QDateTime::currentMSecsSinceEpoch();
         m_storage->fetchNotes(id);
         QTest::qWait(m_initTime);
@@ -184,12 +187,12 @@ void TestSqliteStorage::testUpgradeV2V3()
         QCOMPARE(pi.id, id);
         QSharedPointer<QObject> sp = arguments.at(1).value< QSharedPointer<QObject> >();
         QVERIFY(sp);
-        QSharedPointer<NoteList> spnl = qSharedPointerDynamicCast<NoteList>(sp);
+        QSharedPointer<NoteModel> spnl = qSharedPointerDynamicCast<NoteModel>(sp);
         QVERIFY(spnl);
-        QCOMPARE(spnl->data().count(), 3);
+        QCOMPARE(spnl->items().count(), 3);
     }
     {
-        QSignalSpy spy(m_storage, SIGNAL(fireTaskProgress(ProgressInfo,QVariant)));
+        QSignalSpy spy(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
         const qint64 id = QDateTime::currentMSecsSinceEpoch();
         m_storage->fetchAuthors(id);
         QTest::qWait(m_initTime);
@@ -199,7 +202,7 @@ void TestSqliteStorage::testUpgradeV2V3()
         QCOMPARE(pi.id, id);
         QSharedPointer<QObject> sp = arguments.at(1).value< QSharedPointer<QObject> >();
         QVERIFY(sp);
-        QSharedPointer<AuthorList> spnl = qSharedPointerDynamicCast<AuthorList>(sp);
+        QSharedPointer<AuthorModel> spnl = qSharedPointerDynamicCast<AuthorModel>(sp);
         QVERIFY(spnl);
         QCOMPARE(spnl->data().count(), 2);
     }

@@ -52,7 +52,10 @@ SOURCES *= $$files(*.cpp) \
     ../shared/author.cpp \
     test_records.cpp \
     ../shared/taskgetnotes.cpp \
-    ../shared/basemodelitemlist.cpp
+    ../shared/notemodel.cpp \
+    ../shared/authormodel.cpp \
+    ../shared/progressinfo.cpp \
+    ../shared/storagefactory.cpp
 
 HEADERS *= $$files(*.h) \
             ../src/settings.h  \
@@ -74,7 +77,10 @@ HEADERS *= $$files(*.h) \
     ../shared/author.h \
     test_records.h \
     ../shared/taskgetnotes.h \
-    ../shared/basemodelitemlist.h
+    ../shared/notemodel.h \
+    ../shared/authormodel.h \
+    ../shared/progressinfo.h \
+    ../shared/storagefactory.h
 
 CONFIG += debug
 # nullptr and other new C++ features

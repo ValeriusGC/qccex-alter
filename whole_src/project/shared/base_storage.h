@@ -7,72 +7,13 @@
 //#include "sb_def.h"
 
 #include "storage_globals.h"
-using namespace storage;
+//using namespace storage;
 
 #include "basemodelitemlist.h"
 
-//#include "note.h"
+#include "progressinfo.h"
 
-//namespace model {
-//QT_FORWARD_DECLARE_CLASS(NoteList)
-//}
-
-
-/**
- *  Useful struct for pass information about progress.
- * @brief The ProgressInfo struct
- */
-struct ProgressInfo {
-    enum Status_e{
-        TPS_Progress,
-        TPS_Success,
-        TPS_Warning,
-        TPS_Error,
-        TPS_Cancelled
-    };
-    const qint64 id;
-    Status_e status;
-    qint32 min;
-    qint32 max;
-    qint32 pos;
-    QString message;
-
-    ProgressInfo(qint64 id=0) : id(id), status(TPS_Success), min(0), max(100), pos(100), message("") {
-    }
-
-    ProgressInfo(qint64 id, Status_e status, qint32 min, qint32 max, qint32 pos, const QString &message)
-        : id(id), status(status), min(min), max(max), pos(pos), message(message) {
-    }
-
-};
-
-Q_DECLARE_METATYPE(ProgressInfo)
-
-///**
-// *
-// * @brief The Task class
-// */
-//class Task : public QObject{
-//    Q_OBJECT
-//public:
-//    explicit Task(QObject *parent) : QObject(parent) {
-//        INC_THIS(true);
-//    }
-//    virtual ~Task() {
-//        DEC_THIS(true);
-//    }
-
-////    void progress(qint32 inc) {
-////        const qint32 newPos = pos + inc;
-////        if(newPos < ma)
-////        if()
-////    }
-
-//private:
-//    qint64 m_id;
-//    QObject *m_value;
-
-//};
+namespace storage {
 
 class BaseStorage : public QObject
 {
@@ -132,8 +73,8 @@ protected:
     virtual void doFetchAuthors(qint64 id) = 0;
 
 signals:
-    void fireInitProgress(const ProgressInfo &pi);
-    void fireTaskProgress(const ProgressInfo &pi, const QVariant &sp);
+    void fireInitProgress(const nq::ProgressInfo &pi);
+    void fireTaskProgress(const nq::ProgressInfo &pi, const QVariant &sp);
 //    void fireTaskProgress(const ProgressInfo &pi, const QSharedPointer<QObject> &sp);
 
 public slots:
@@ -142,5 +83,7 @@ private:
     QString m_name;
     bool m_isInit;
 };
+
+} // namespace storage
 
 #endif // BASESTORAGE_H

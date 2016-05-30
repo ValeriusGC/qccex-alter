@@ -5,6 +5,8 @@
 #include <QSqlError>
 
 #include "base_storage.h"
+#include "progressinfo.h"
+using namespace nq;
 #include "note.h"
 #include "author.h"
 
@@ -33,9 +35,9 @@ public:
      */
     BoolVariantResult_t tables() const;
 
-    NoteListResult_t getNotes() const;
+//    NoteListResult_t getNotes() const;
 
-    AuthorListResult_t getAuthors() const;
+//    AuthorListResult_t getAuthors() const;
 
 protected:
     // BaseStorage interface
