@@ -36,7 +36,7 @@ Widget::~Widget()
 
 void Widget::focusInEvent(QFocusEvent *event)
 {
-
+    Q_UNUSED(event);
 }
 
 void Widget::buttonClicked(QWidget *sender)
@@ -57,7 +57,8 @@ void Widget::buttonClicked(QWidget *sender)
 
 void Widget::fireInitProgress(const ProgressInfo &pi)
 {
-    LOG_TP(pi.message);
+    Q_UNUSED(pi);
+//    LOG_TP(pi.message);
 }
 
 void Widget::setupUi()

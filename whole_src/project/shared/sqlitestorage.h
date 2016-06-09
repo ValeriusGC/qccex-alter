@@ -21,6 +21,9 @@ using namespace model;
 
 QT_FORWARD_DECLARE_CLASS(BaseTable)
 
+/**
+ * @brief The SqliteStorage class
+ */
 class SqliteStorage : public BaseStorage, public sqlite::IStorageOperations
 {
     Q_OBJECT
@@ -87,11 +90,15 @@ private:
 
 };
 
+
+/**
+ * @brief The DbHelper class
+ */
 class DbHelper Q_DECL_FINAL{
 
 public:
 DbHelper(const QString &name) : m_result(false, QVariant()){
-    LOG_T;
+    INC_THIS(false);
     m_db = QSqlDatabase::database();
     if(!m_db.isOpen()) {
         m_db = QSqlDatabase::addDatabase("QSQLITE");
@@ -105,7 +112,7 @@ DbHelper(const QString &name) : m_result(false, QVariant()){
         if(!m_db.transaction()) {
             m_result = {false, m_db.lastError().text()};
         }else{
-            LOG_TP("TRANSACTION IS ON" << ++m_counter);
+//            LOG_TP("TRANSACTION IS ON" << ++m_counter);
             m_result = {true, QVariant()};
         }
     }
@@ -114,43 +121,29 @@ DbHelper(const QString &name) : m_result(false, QVariant()){
 
 ~DbHelper() {
     if(m_result.result()) {
-        bool ok = m_db.commit();
-        LOG_TP("COMMIT" << ok << --m_counter);
+        /*bool ok = */
+        m_db.commit();
+//        LOG_TP("COMMIT" << ok << --m_counter);
     }else{
-        bool ok = m_db.rollback();
-        LOG_TP("ROLLBACK" << ok << --m_counter);
+        /*bool ok = */
+        m_db.rollback();
+//        LOG_TP("ROLLBACK" << ok << --m_counter);
     }
-//    if(!m_committed){
-//        const bool ok = m_db.rollback();
-//        LOG_TP("ROLLBACK" << ok);
-//    }
     m_db.close();
+    DEC_THIS(false);
 }
 
 QSqlDatabase db() const {
     return m_db;
 }
 
-//QString lastError() const {
-//    return m_lastError;
-//}
-
-//void commit() {
-//    if(!m_committed) {
-//        m_committed = m_db.commit();
-//        LOG_TP("COMMITTED" << m_committed);
-//    }
-//}
-
 BoolVariantResult_t &result() {
     return m_result;
 }
 
 private:
-//    bool m_committed;
     QSqlDatabase m_db;
-//    QString m_lastError;
-    static qint32 m_counter;
+    static qint32 m_testCounter;
     BoolVariantResult_t m_result;
 
     DbHelper(DbHelper&);

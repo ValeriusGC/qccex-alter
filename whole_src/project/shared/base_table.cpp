@@ -36,6 +36,8 @@ QVector<QString> &BaseTable::fieldNames()
 
 bool BaseTable::contains(const QString &column, const QVariant &value)
 {
+    Q_UNUSED(column);
+    Q_UNUSED(value);
 //    QSqlDatabase db = QSqlDatabase::database();
 //    if(!db.isOpen()) {
 //        return false;

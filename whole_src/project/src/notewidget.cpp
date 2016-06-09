@@ -85,6 +85,7 @@ NoteWidget::~NoteWidget()
 
 void NoteWidget::focusInEvent(QFocusEvent *event)
 {
+    Q_UNUSED(event);
     m_listWidget->setFocus();
     if(m_listWidget->model()->rowCount()) {
         m_listWidget->setCurrentIndex(m_listWidget->model()->index(0, 0));
@@ -137,6 +138,7 @@ void NoteWidget::onItemActivated(QListWidgetItem *item)
 
 void NoteWidget::onCurrentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
+    Q_UNUSED(previous);
     QVariant v = current->data(0);
     OneNote *btn = v.value<OneNote *>();
     if(btn) {
@@ -212,7 +214,7 @@ QLabel *OneNote::labelText() const
 
 NewNoteWidget::NewNoteWidget(QWidget *parent) : Inherited_t(parent)
 {
-    INC_THIS(true);
+    INC_THIS(false);
     QLayout* tsL = new QHBoxLayout;
     m_editSearch = new QLineEdit(this);
     m_buttonInsert = new QPushButton(this);
@@ -224,7 +226,7 @@ NewNoteWidget::NewNoteWidget(QWidget *parent) : Inherited_t(parent)
 
 NewNoteWidget::~NewNoteWidget()
 {
-    DEC_THIS(true);
+    DEC_THIS(false);
 }
 
 QLineEdit *NewNoteWidget::editSearch() const
@@ -239,6 +241,7 @@ QPushButton *NewNoteWidget::buttonInsert() const
 
 void NewNoteWidget::focusInEvent(QFocusEvent *event)
 {
+    Q_UNUSED(event);
     LOG;
 }
 

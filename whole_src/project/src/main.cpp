@@ -19,7 +19,6 @@ int main(int argc, char *argv[])
     qRegisterMetaType<nq::ProgressInfo>("nq::ProgressInfo");
     int retCode;
     {
-        LOG_TP(QObject::tr("Hello"));
         Widget w;
         w.show();
         retCode = a.exec();

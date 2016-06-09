@@ -24,11 +24,11 @@ BaseStorage *StorageFactory::make(const QString &type)
 
 StorageFactory::StorageFactory() : Inherited_t(nullptr)
 {
-    INC_THIS(true);
+    INC_THIS(false);
 }
 
 StorageFactory::~StorageFactory()
 {
-    DEC_THIS(true);
+    DEC_THIS(false);
 }
 

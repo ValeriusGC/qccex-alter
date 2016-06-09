@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QHash>
 #include <QObject>
+#include <typeinfo>
 
 //======================================================================================================================
 // Debug stuff
@@ -43,13 +44,13 @@ QHash<QString, QString> &g_objMap();
     {   \
         const quint64 key = reinterpret_cast<quint64>(this); \
         const QString keyS = QString::number(key, 16).sprintf("0x%08x", (uint)key); \
-        const QString name = this->metaObject()->className(); \
-        if(g_objMap().contains(keyS)) {    \
+        const QString name = typeid(this).name(); \
+        if(vfx_shared::g_objMap().contains(keyS)) {    \
             Q_ASSERT_X(false, "DEBUG_OBJ_HASH", (QString("Object %1 (%2) already exists").arg(keyS).arg(name).toLatin1())); \
         }   \
-        g_objMap()[keyS] = name;  \
+        vfx_shared::g_objMap()[keyS] = name;  \
         if(show) {   \
-            const QString s = QString("DEBUG_OBJ_HASH: add %1 (%2). Total = %3").arg(keyS).arg(name).arg(g_objMap().size()); \
+            const QString s = QString("DEBUG_OBJ_HASH: add %1 (%2). Total = %3").arg(keyS).arg(name).arg(vfx_shared::g_objMap().size()); \
             qDebug() << s;  \
         }   \
     }
@@ -59,18 +60,18 @@ QHash<QString, QString> &g_objMap();
     {               \
         const quint64 key = reinterpret_cast<quint64>(this); \
         const QString keyS = QString::number(key, 16).sprintf("0x%08x", (uint)key); \
-        const QString name = this->metaObject()->className(); \
-        if(g_objMap().contains(keyS)) {    \
-            g_objMap().remove(keyS);       \
+        const QString name = typeid(this).name(); \
+        if(vfx_shared::g_objMap().contains(keyS)) {    \
+            vfx_shared::g_objMap().remove(keyS);       \
             if(show) {   \
-                const QString s = QString("DEBUG_OBJ_HASH: del %1 (%2) .Total = %3").arg(keyS).arg(name).arg(g_objMap().size()); \
+                const QString s = QString("DEBUG_OBJ_HASH: del %1 (%2) .Total = %3").arg(keyS).arg(name).arg(vfx_shared::g_objMap().size()); \
                 qDebug() << s; \
             } \
         }  \
     }
 
 // Shows how many objects is in memory yet
-#define CHECK_PTR qDebug()  << "--------------------\nDEBUG_OBJ_HASH:" << g_objMap().size() << g_objMap() \
+#define CHECK_PTR qDebug()  << "--------------------\nDEBUG_OBJ_HASH:" << vfx_shared::g_objMap().size() << vfx_shared::g_objMap() \
                             << "\n--------------------";
 
 // Substitute for 'show'

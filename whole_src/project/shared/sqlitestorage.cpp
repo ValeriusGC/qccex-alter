@@ -19,10 +19,11 @@ using namespace storage;
 using namespace storage::sqlite;
 
 
-qint32 DbHelper::m_counter = 0;
+qint32 DbHelper::m_testCounter = 0;
 
 SqliteStorage::SqliteStorage(QObject *parent) : Inhherited_t(parent)
 {
+    INC_THIS(false);
     m_tableMap[TableCfg::TBL_NAME] = StoragePtr_t(new TableCfg);
     m_tableMap[TableNote::TBL_NAME] = StoragePtr_t(new TableNote);
     m_tableMap[TableAuthor::TBL_NAME] = StoragePtr_t(new TableAuthor);
@@ -32,7 +33,7 @@ SqliteStorage::SqliteStorage(QObject *parent) : Inhherited_t(parent)
 
 SqliteStorage::~SqliteStorage()
 {
-
+    DEC_THIS(false);
 }
 
 BoolVariantResult_t SqliteStorage::tables() const
@@ -673,6 +674,8 @@ void SqliteStorage::doMarkNotesAsDeleted(qint64 id, const QVector<qint32> &ids)
 
 void SqliteStorage::doRemoveNotes(qint64 id, const QVector<qint32> &ids)
 {
+    Q_UNUSED(id);
+    Q_UNUSED(ids);
 }
 
 void SqliteStorage::doFetchAuthors(qint64 id)

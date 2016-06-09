@@ -106,7 +106,7 @@ void NoteModel::markAsDeleted(qint32 id)
 
 void NoteModel::remove(qint32 id)
 {
-
+    Q_UNUSED(id);
 }
 
 void NoteModel::onTaskProgress(const nq::ProgressInfo &pi, const QVariant &sp)
@@ -162,12 +162,8 @@ MySortFilterProxyModel::MySortFilterProxyModel(QObject *parent)
 
 bool MySortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    int sr = sortRole();
     QVariant leftData = left.data(NoteModel::NMR_TsCreated);
     QVariant rightData = right.data(NoteModel::NMR_TsCreated);
-    int ldt = leftData.type();
-    QString ldtn = leftData.typeName();
-
     if (leftData.type() == QVariant::LongLong) {
         return leftData.toLongLong() < rightData.toLongLong();
     } else {
@@ -175,8 +171,4 @@ bool MySortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex
         QString rightString = rightData.toString();
         return QString::localeAwareCompare(leftString, rightString) < 0;
     }
-    //    qDebug() << Q_FUNC_INFO
-    //             << left.data(NoteModel::NMR_Debug).toString()
-    //             << right.data(NoteModel::NMR_Debug).toString();
-    //    return left.data().toString().compare(right.data().toString());
 }

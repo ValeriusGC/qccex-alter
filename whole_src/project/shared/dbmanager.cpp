@@ -24,7 +24,8 @@ DbManager::~DbManager()
 
 vfx_shared::Result<QSqlError, quint32> DbManager::touch(const QString &name)
 {
-
+    Q_UNUSED(name);
+    return {QSqlError(), -1};
 }
 
 vfx_shared::Result<QSqlError, DbManager *> DbManager::init(const QString &name/*, quint32 version*/)

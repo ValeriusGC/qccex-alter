@@ -12,7 +12,7 @@ using namespace vfx_shared;
 
 NewNoteDialog::NewNoteDialog(QWidget *parent) : Inherited_t(parent)
 {
-    INC_THIS(true);
+    INC_THIS(false);
     m_textEdit = new QTextEdit(this);
     m_buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     //    m_buttonAdd = new QPushButton(tr("Add", "Widget"), this);
@@ -32,7 +32,7 @@ NewNoteDialog::NewNoteDialog(QWidget *parent) : Inherited_t(parent)
 
 NewNoteDialog::~NewNoteDialog()
 {
-    DEC_THIS(true);
+    DEC_THIS(false);
 }
 QTextEdit *NewNoteDialog::textEdit() const
 {

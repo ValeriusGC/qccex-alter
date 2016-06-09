@@ -128,6 +128,10 @@ void TestRecords::testAddNote3()
         bool b2 = sp2.isNull();
         bool b3 = sp2.isNull();
         sp3->items.append(new Note);
+        Q_UNUSED(mn2);
+        Q_UNUSED(b1);
+        Q_UNUSED(b2);
+        Q_UNUSED(b3);
 
     }
 

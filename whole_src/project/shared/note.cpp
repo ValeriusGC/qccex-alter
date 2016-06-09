@@ -11,15 +11,12 @@ Note::Note(QObject *parent)
       m_tsEdited(0),
       m_asDel(0)
 {
-//    Q_ASSERT_X(authorId > 0, Q_FUNC_INFO, "Author id not valid");
-//    m_id = id;
-//    m_authorId = authorId;
-    INC_THIS(true);
+    INC_THIS(false);
 }
 
 Note::~Note()
 {
-    DEC_THIS(true);
+    DEC_THIS(false);
 }
 
 Note::Note(const Note &n) : QObject(n.parent())

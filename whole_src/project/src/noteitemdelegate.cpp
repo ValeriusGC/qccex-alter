@@ -14,12 +14,12 @@ NoteItemDelegate::NoteItemDelegate(const QString &templ, QObject *parent)
     : Inherited_t(parent),
       m_template(templ)
 {
-    INC_THIS(true);
+    INC_THIS(false);
 }
 
 NoteItemDelegate::~NoteItemDelegate()
 {
-    DEC_THIS(true);
+    DEC_THIS(false);
 }
 
 void NoteItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const

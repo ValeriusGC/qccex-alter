@@ -21,12 +21,12 @@ const QString TableCfg::FLD_TS_EDIT     = QStringLiteral("ts_edit");
 
 TableCfg::TableCfg()
 {
-    qDebug() << Q_FUNC_INFO << sizeof(TableCfg);
+    INC_THIS(false);
 }
 
 TableCfg::~TableCfg()
 {
-    qDebug() << Q_FUNC_INFO;
+    DEC_THIS(false);
 }
 
 BoolVariantResult_t TableCfg::doCreate(QSqlDatabase db)
@@ -419,6 +419,7 @@ BoolVariantResult_t TableAuthor::doCreate(QSqlDatabase db)
 
 BoolVariantResult_t TableAuthor::doUpgrade(QSqlDatabase db, const V1_t &fromVersion)
 {
+    Q_UNUSED(fromVersion);
     return doCreate(db);
 }
 
@@ -520,11 +521,13 @@ BoolVariantResult_t TableTags::doCreate(QSqlDatabase db)
 
 BoolVariantResult_t TableTags::doUpgrade(QSqlDatabase db, const V1_t &fromVersion)
 {
+    Q_UNUSED(fromVersion);
     return doCreate(db);
 }
 
 BoolVariantResult_t TableTags::doUpgrade(QSqlDatabase db, const V2_t &fromVersion)
 {
+    Q_UNUSED(fromVersion);
     return doCreate(db);
 }
 
@@ -562,11 +565,13 @@ BoolVariantResult_t TableTagsNotes::doCreate(QSqlDatabase db)
 
 BoolVariantResult_t TableTagsNotes::doUpgrade(QSqlDatabase db, const V1_t &fromVersion)
 {
+    Q_UNUSED(fromVersion);
     return doCreate(db);
 }
 
 BoolVariantResult_t TableTagsNotes::doUpgrade(QSqlDatabase db, const V2_t &fromVersion)
 {
+    Q_UNUSED(fromVersion);
     return doCreate(db);
 }
 
