@@ -24,6 +24,9 @@ namespace vfx_shared {
 
 // Log with parameter and TIME
 #define LOG_TP(p) { qDebug() << _T << Q_FUNC_INFO << "-->" << #p << p; }
+// continious log such as LOG_TP2(var1 << var1 << var1 << ... )
+#define LOG_TP2(p) qDebug() << _T << Q_FUNC_INFO << "-->" << #p << p
+
 
 // Log with parameter, TIME, FILE and LINE
 #define LOG_TPFL(p) { qDebug() << _T << Q_FUNC_INFO << "-->" << #p << p << __FILE__ << __LINE__; }
@@ -87,6 +90,7 @@ QHash<QString, QString> &g_objMap();
 #define LOG_T
 // Stub - Log with parameter and TIME
 #define LOG_TP
+#define LOG_TP2
 // Stub - Log with parameter, TIME, FILE and LINE
 #define LOG_TPFL
 

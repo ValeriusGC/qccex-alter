@@ -38,6 +38,9 @@ private slots:
 
     void testAddNote();
 
+    void testAddNote3();
+
+
 private:
     /**
      *  Time to init

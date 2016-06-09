@@ -1,6 +1,8 @@
 #include <QApplication>
+#include <QMetaType>
 
 #include "widget.h"
+#include "progressinfo.h"
 
 #include "shared/shared_def.h"
 using namespace vfx_shared;
@@ -14,13 +16,17 @@ using namespace vfx_shared;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
-    LOG_TP(QObject::tr("Hello"));
-
-    Widget w;
-    w.show();
-
-    return a.exec();
+    qRegisterMetaType<nq::ProgressInfo>("nq::ProgressInfo");
+    int retCode;
+    {
+        LOG_TP(QObject::tr("Hello"));
+        Widget w;
+        w.show();
+        retCode = a.exec();
+    }
+    // Settings::instance (and maybe other static singletones must be in memory yet in this point due their behaviour)
+    CHECK_PTR;
+    return retCode;
 }
 
 #endif

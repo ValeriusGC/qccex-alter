@@ -13,6 +13,8 @@
 
 #include "progressinfo.h"
 
+#include "note.h"
+
 namespace storage {
 
 class BaseStorage : public QObject
@@ -37,7 +39,12 @@ public:
 
     void fetchNotes(qint64 id) Q_DECL_FINAL;
     void clearNotes(qint64 id) Q_DECL_FINAL;
-    void addNotes(qint64 id, const QSharedPointer<QObject> &notes) Q_DECL_FINAL;
+//    void addNotes(qint64 id, const QSharedPointer<QObject> &notes) Q_DECL_FINAL;
+//    void addNotes2(qint64 id, const QVector<QSharedPointer<model::Note>> &notes) Q_DECL_FINAL;
+    void addNotes3(qint64 id, const QSharedPointer<model::Notes> &notes) Q_DECL_FINAL;
+    void markNotesAsDeleted(qint64 id, const QVector<qint32> &ids);
+
+    void removeNotes(qint64 id, const QVector<qint32> &ids) Q_DECL_FINAL;
 
     void fetchAuthors(qint64 id) Q_DECL_FINAL;
 
@@ -68,13 +75,21 @@ protected:
 
     virtual void doFetchNotes(qint64 id) = 0;
     virtual void doClearNotes(qint64 id) = 0;
-    virtual void doAddNotes(qint64 id, const QSharedPointer<QObject> &notes) = 0;
+//    virtual void doAddNotes(qint64 id, const QSharedPointer<QObject> &notes) = 0;
+//    virtual void doAddNotes2(qint64 id, const QVector<QSharedPointer<model::Note>> &notes) = 0;
+    virtual void doAddNotes3(qint64 id, const QSharedPointer<model::Notes> &notes) = 0;
+
+    virtual void doMarkNotesAsDeleted(qint64 id, const QVector<qint32> &ids) = 0;
+
+    virtual void doRemoveNotes(qint64 id, const QVector<qint32> &ids) = 0;
 
     virtual void doFetchAuthors(qint64 id) = 0;
+
 
 signals:
     void fireInitProgress(const nq::ProgressInfo &pi);
     void fireTaskProgress(const nq::ProgressInfo &pi, const QVariant &sp);
+    void fireTaskNoteProgress(const nq::ProgressInfo &pi, const QSharedPointer<model::Notes> &notes);
 //    void fireTaskProgress(const ProgressInfo &pi, const QSharedPointer<QObject> &sp);
 
 public slots:

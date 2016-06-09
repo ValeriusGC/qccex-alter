@@ -28,6 +28,17 @@ public:
     QString text() const;
     void setText(const QString &text);
 
+    bool asDel() const;
+    void setAsDel(bool asDel);
+
+    qint64 tsCreated() const;
+    void setTsCreated(const qint64 &tsCreated);
+
+    qint64 tsEdited() const;
+    void setTsEdited(const qint64 &tsEdited);
+
+    QString toString() const;
+
 signals:
 
 public slots:
@@ -36,47 +47,34 @@ private:
     qint32 m_id;
     qint32 m_authorId;
     QString m_text;
+    qint64 m_tsCreated;
+    qint64 m_tsEdited;
+    bool m_asDel;
+
+    Note(const Note &n);
+    Note &operator=(const Note &n);
 };
 
-//class NoteList : public BaseModelItemList {
-//    Q_OBJECT
-//    typedef BaseModelItemList Inherited_t;
-//public:
-
-//    explicit NoteList(QObject *parent = 0) : Inherited_t(parent){
-//        INC_THIS(true);
-//    }
-
-//    ~NoteList(){
-//        foreach (auto item, m_items) {
-//            delete item;
-//        }
-//        DEC_THIS(true);
-//    }
-
-//    QList<Note*> &data() {
-//        return m_items;
-//    }
-
-//private:
-//    QList<Note*> m_items;
-
-//};
-
-//typedef Result<NoteList*, QString> NoteListResult_t;
-
-//class TaskGetNoteList {
-//public:
-//private:
-//    qint64 m_id;
-//    QSharedPointer<NoteList> m_p;
-//};
+struct Notes
+{
+    explicit Notes(){
+//        qRegisterMetaType<QSharedPointer<model::Notes>>("QSharedPointer<model::Notes>");
+    }
+    ~Notes(){
+        foreach (auto n, items) {
+            delete n;
+        }
+        items.clear();
+    }
+    QVector<Note*> items;
+private:
+    Notes &operator=(Notes &);
+    Notes(Notes &);
+};
 
 } // namespace model;
 
-//Q_DECLARE_METATYPE(model::NoteList)
-//Q_DECLARE_METATYPE(model::NoteList*)
-//Q_DECLARE_METATYPE(model::Note*)
+Q_DECLARE_METATYPE(QSharedPointer<model::Notes>)
 
 
 #endif // NOTE_H

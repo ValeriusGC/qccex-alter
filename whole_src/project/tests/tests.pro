@@ -47,7 +47,7 @@ SOURCES *= $$files(*.cpp) \
     ../shared/base_table.cpp \
     ../shared/sqlite_storage_v1.cpp \
     ../shared/sqlite_storage_v2.cpp \
-    ../shared/sqlite_storage_v3.cpp \
+    ../shared/sqlitestorage_elements.cpp \
     ../shared/note.cpp \
     ../shared/author.cpp \
     test_records.cpp \
@@ -55,7 +55,9 @@ SOURCES *= $$files(*.cpp) \
     ../shared/notemodel.cpp \
     ../shared/authormodel.cpp \
     ../shared/progressinfo.cpp \
-    ../shared/storagefactory.cpp
+    ../shared/storagefactory.cpp \
+    ../shared/sqlstorageelement.cpp \
+    ../shared/shared_const.cpp
 
 HEADERS *= $$files(*.h) \
             ../src/settings.h  \
@@ -72,7 +74,7 @@ HEADERS *= $$files(*.h) \
     ../shared/base_table.h \
     ../shared/sqlite_storage_v1.h \
     ../shared/sqlite_storage_v2.h \
-    ../shared/sqlite_storage_v3.h \
+    ../shared/sqlitestorage_elements.h \
     ../shared/note.h \
     ../shared/author.h \
     test_records.h \
@@ -80,7 +82,9 @@ HEADERS *= $$files(*.h) \
     ../shared/notemodel.h \
     ../shared/authormodel.h \
     ../shared/progressinfo.h \
-    ../shared/storagefactory.h
+    ../shared/storagefactory.h \
+    ../shared/sqlstorageelement.h \
+    ../shared/shared_const.h
 
 CONFIG += debug
 # nullptr and other new C++ features

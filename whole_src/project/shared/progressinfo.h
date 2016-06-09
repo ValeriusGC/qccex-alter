@@ -28,12 +28,12 @@ struct ProgressInfo
 
     ProgressInfo(qint64 id=0) : id(id), status(TPS_Success), min(0), max(100), pos(100), message("")
     {
-        qDebug() << this << id << message;
+//        qDebug() << this << id << message;
     }
     ProgressInfo(qint64 id, Status_e status, qint32 min, qint32 max, qint32 pos, const QString &message)
         : id(id), status(status), min(min), max(max), pos(pos), message(message)
     {
-        qDebug() << this << id << message;
+//        qDebug() << this << id << message;
     }
 //    ProgressInfo(ProgressInfo &pi);
 //    ProgressInfo &operator=(const ProgressInfo &pi);

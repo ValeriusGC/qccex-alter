@@ -26,7 +26,7 @@ protected:
 
 private slots:
     void buttonClicked(QWidget *sender);
-    void fireInitProgress(const ProgressInfo &pi);
+    void fireInitProgress(const nq::ProgressInfo &pi);
 
 
 private:

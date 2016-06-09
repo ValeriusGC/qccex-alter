@@ -117,7 +117,7 @@ void Widget::init()
 {
     BaseStorage *storage = StorageFactory::instance().make("sqlite");
     if(storage != nullptr){
-        connect(storage, SIGNAL(fireInitProgress(ProgressInfo)), SLOT(fireInitProgress(ProgressInfo)));
+        connect(storage, SIGNAL(fireInitProgress(nq::ProgressInfo)), SLOT(fireInitProgress(nq::ProgressInfo)));
         storage->init("qccex.db");
     }
 

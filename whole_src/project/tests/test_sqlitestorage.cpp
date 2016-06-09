@@ -9,7 +9,7 @@
 #include "test_common_defs.h"
 #include "sqlite_storage_v1.h"
 #include "sqlite_storage_v2.h"
-#include "sqlite_storage_v3.h"
+#include "sqlitestorage_elements.h"
 
 using namespace storage;
 
@@ -71,17 +71,17 @@ void TestSqliteStorage::testCreateV3()
     // Check version
     BoolVariantResult_t ver = m_storage->version();
     QVERIFY2(ver.result() == true, ver.data().toString().toLatin1());
-    QVERIFY(ver.data().toInt() == storage::sqlite::v3::VERSION);
+    QVERIFY(ver.data().toInt() == 3);
 
     BoolVariantResult_t tablesRes = m_storage->tables();
     QVERIFY2(tablesRes.result() == true, tablesRes.data().toString().toLatin1());
     QStringList tables = tablesRes.data().toStringList();
     QCOMPARE(tables.count(), 5);
-    QVERIFY(tables.contains(storage::sqlite::v3::TableCfg::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableNote::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableAuthor::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableTags::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableTagsNotes::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableCfg::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableNote::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableAuthor::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableTags::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableTagsNotes::TBL_NAME));
 
 //    BoolVariantResult_t v1Created = createV1();
 //    QVERIFY2(v1Created.result(), v1Created.data().toString().toLatin1());
@@ -108,17 +108,17 @@ void TestSqliteStorage::testUpgradeV1V3()
     // Check version
     BoolVariantResult_t ver = m_storage->version();
     QVERIFY2(ver.result() == true, ver.data().toString().toLatin1());
-    QVERIFY(ver.data().toInt() == storage::sqlite::v3::VERSION);
+    QVERIFY(ver.data().toInt() == 3);
 
     BoolVariantResult_t tablesRes = m_storage->tables();
     QVERIFY2(tablesRes.result() == true, tablesRes.data().toString().toLatin1());
     QStringList tables = tablesRes.data().toStringList();
     QCOMPARE(tables.count(), 5);
-    QVERIFY(tables.contains(storage::sqlite::v3::TableCfg::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableNote::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableAuthor::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableTags::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableTagsNotes::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableCfg::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableNote::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableAuthor::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableTags::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableTagsNotes::TBL_NAME));
 
     // Check al notes in DB (they mast be saved)
 //    QList<QVariant> l;
@@ -131,17 +131,18 @@ void TestSqliteStorage::testUpgradeV1V3()
     {
         QSignalSpy spyTask(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
         const qint64 id = QDateTime::currentMSecsSinceEpoch();
+        //
         m_storage->fetchNotes(id);
         QTest::qWait(m_initTime);
         QList<QVariant> arguments = spyTask.takeLast(); // take the last signal
         ProgressInfo pi = arguments.at(0).value<ProgressInfo>();
         QVERIFY2(pi.status == ProgressInfo::TPS_Success, pi.message.toLatin1());
         QCOMPARE(pi.id, id);
-        QSharedPointer<QObject> sp = arguments.at(1).value< QSharedPointer<QObject> >();
-        QVERIFY(sp);
-        QSharedPointer<NoteModel> spnl = qSharedPointerDynamicCast<NoteModel>(sp);
+        QSharedPointer<Notes> spnl = arguments.at(1).value< QSharedPointer<Notes> >();
         QVERIFY(spnl);
-        QCOMPARE(spnl->items().count(), 3);
+//        QSharedPointer<NoteModel> spnl = qSharedPointerDynamicCast<NoteModel>(sp);
+//        QVERIFY(spnl);
+        QCOMPARE(spnl->items.count(), 3);
     }
 }
 
@@ -164,17 +165,17 @@ void TestSqliteStorage::testUpgradeV2V3()
     // Check version
     BoolVariantResult_t ver = m_storage->version();
     QVERIFY2(ver.result() == true, ver.data().toString().toLatin1());
-    QVERIFY(ver.data().toInt() == storage::sqlite::v3::VERSION);
+    QVERIFY(ver.data().toInt() == 3);
 
     BoolVariantResult_t tablesRes = m_storage->tables();
     QVERIFY2(tablesRes.result() == true, tablesRes.data().toString().toLatin1());
     QStringList tables = tablesRes.data().toStringList();
     QCOMPARE(tables.count(), 5);
-    QVERIFY(tables.contains(storage::sqlite::v3::TableCfg::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableNote::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableAuthor::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableTags::TBL_NAME));
-    QVERIFY(tables.contains(storage::sqlite::v3::TableTagsNotes::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableCfg::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableNote::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableAuthor::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableTags::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableTagsNotes::TBL_NAME));
 
     {
         QSignalSpy spyTask(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
@@ -185,11 +186,11 @@ void TestSqliteStorage::testUpgradeV2V3()
         ProgressInfo pi = arguments.at(0).value<ProgressInfo>();
         QVERIFY2(pi.status == ProgressInfo::TPS_Success, pi.message.toLatin1());
         QCOMPARE(pi.id, id);
-        QSharedPointer<QObject> sp = arguments.at(1).value< QSharedPointer<QObject> >();
-        QVERIFY(sp);
-        QSharedPointer<NoteModel> spnl = qSharedPointerDynamicCast<NoteModel>(sp);
+        QSharedPointer<Notes> spnl = arguments.at(1).value< QSharedPointer<Notes> >();
         QVERIFY(spnl);
-        QCOMPARE(spnl->items().count(), 3);
+//        QSharedPointer<NoteModel> spnl = qSharedPointerDynamicCast<NoteModel>(sp);
+//        QVERIFY(spnl);
+        QCOMPARE(spnl->items.count(), 3);
     }
     {
         QSignalSpy spy(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
@@ -311,14 +312,14 @@ BoolVariantResult_t TestSqliteStorage::createV2()
     QVariant authId;
     {
         // 'Author' table and data
-        QSqlQuery q(db);
-        BoolResult_t created = v2::TableAuthor::create(db);
+        BoolResult_t created = v2::TableAuthor().init(db, v2::TableAuthor::INVALID_VERSION);
         if (!created.result()){
             return {created.result(), created.data()};
         }
 
         const QString QRY_INSERT(QStringLiteral("insert into %1(%2) values(?)")
                                  .arg(v2::TableAuthor::TBL_NAME).arg(v2::TableAuthor::FLD_TITLE));
+        QSqlQuery q(db);
         if (!q.prepare(QRY_INSERT)){
             return {false, q.lastError().text()};
         }

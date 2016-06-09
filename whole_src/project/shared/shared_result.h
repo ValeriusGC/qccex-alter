@@ -122,6 +122,8 @@ typedef Result<bool> BoolResult_t;
  */
 typedef Result<bool, QList<QString> > BoolListResult_t;
 
+
+
 /**
  * @brief ProgressResult_t
  * Keeps result and message for some task progress result.

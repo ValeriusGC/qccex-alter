@@ -64,12 +64,12 @@ void TestRecords::init()
         QCOMPARE(pi.id, id);
 
         QVariant v = arguments.at(1);
-        QVERIFY(v.canConvert< QSharedPointer<QObject> >());
-        QSharedPointer<QObject> sp = v.value< QSharedPointer<QObject> >();
-        QVERIFY(sp);
-        QSharedPointer<NoteModel> spnl = qSharedPointerDynamicCast<NoteModel>(sp);
+        QVERIFY(v.canConvert< QSharedPointer<Notes> >());
+        QSharedPointer<Notes> spnl = v.value< QSharedPointer<Notes> >();
+//        QVERIFY(sp);
+//        QSharedPointer<NoteModel> spnl = qSharedPointerDynamicCast<NoteModel>(sp);
         QVERIFY(spnl);
-        QCOMPARE(spnl->items().count(), 0);
+        QCOMPARE(spnl->items.count(), 0);
     }
 }
 
@@ -81,20 +81,71 @@ void TestRecords::cleanup()
 
 void TestRecords::testAddNote()
 {
-    //  1. Add 2 notes
+//    //  1. Add 2 notes
+//    //  2. Check
+//    {
+//        const qint32 cnt = 20;
+//        QSignalSpy spy(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
+//        NoteModel *nl = new NoteModel;
+//        for(int i=0; i < cnt; ++i){
+//            Note *n = new Note();
+//            n->setAuthorId(i%3);
+//            nl->items().append(n);
+//        }
+
+//        const qint64 id = QDateTime::currentMSecsSinceEpoch();
+//        m_storage->addNotes(id, QSharedPointer<NoteModel>(nTableTagsl));
+//        QTest::qWait(m_waitTime);
+//        QList<QVariant> arguments = spy.takeLast(); // take the last signal
+//        ProgressInfo pi = arguments.at(0).value<ProgressInfo>();
+//        QVERIFY2(pi.status == ProgressInfo::TPS_Success, pi.message.toLatin1());
+//        QCOMPARE(pi.id, id);
+
+//        QVariant v = arguments.at(1);
+//        QVERIFY(v.canConvert< QSharedPointer<QObject> >());
+//        QSharedPointer<QObject> sp = v.value< QSharedPointer<QObject> >();
+//        QVERIFY(sp);
+//        QSharedPointer<NoteModel> spnl = qSharedPointerDynamicCast<NoteModel>(sp);
+//        QVERIFY(spnl);
+//        QCOMPARE(spnl->items().count(), cnt);
+//    }
+}
+
+void TestRecords::testAddNote3()
+{
+    {
+        // Just test for memory control.
+        model::Notes *mn1 = new Notes;
+        mn1->items.append(new Note);
+        model::Notes *mn2 = mn1;
+        QSharedPointer<model::Notes> sp1(mn1);
+        QVariant v1 = QVariant::fromValue(sp1);
+        QSharedPointer<model::Notes> sp2 = v1.value<QSharedPointer<model::Notes> >();
+        QSharedPointer<model::Notes> sp3 = sp2;
+        mn1 = sp1.data();
+        mn2 = sp2.data();
+        bool b1 = sp1.isNull();
+        bool b2 = sp2.isNull();
+        bool b3 = sp2.isNull();
+        sp3->items.append(new Note);
+
+    }
+
+
+    //  1. Add 'cnt' notes
     //  2. Check
     {
-        const qint32 cnt = 20;
+        const qint32 cnt = 50;
         QSignalSpy spy(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
-        NoteModel *nl = new NoteModel;
+        Notes *notes = new Notes;
         for(int i=0; i < cnt; ++i){
             Note *n = new Note();
             n->setAuthorId(i%3);
-            nl->items().append(n);
+            notes->items.append(n);
         }
 
         const qint64 id = QDateTime::currentMSecsSinceEpoch();
-        m_storage->addNotes(id, QSharedPointer<NoteModel>(nl));
+        m_storage->addNotes3(id, QSharedPointer<Notes>(notes));
         QTest::qWait(m_waitTime);
         QList<QVariant> arguments = spy.takeLast(); // take the last signal
         ProgressInfo pi = arguments.at(0).value<ProgressInfo>();
@@ -102,12 +153,10 @@ void TestRecords::testAddNote()
         QCOMPARE(pi.id, id);
 
         QVariant v = arguments.at(1);
-        QVERIFY(v.canConvert< QSharedPointer<QObject> >());
-        QSharedPointer<QObject> sp = v.value< QSharedPointer<QObject> >();
+        QVERIFY(v.canConvert< QSharedPointer<Notes> >());
+        QSharedPointer<Notes> sp = v.value< QSharedPointer<Notes> >();
         QVERIFY(sp);
-        QSharedPointer<NoteModel> spnl = qSharedPointerDynamicCast<NoteModel>(sp);
-        QVERIFY(spnl);
-        QCOMPARE(spnl->items().count(), cnt);
+        QCOMPARE(sp->items.count(), cnt);
     }
 }
 

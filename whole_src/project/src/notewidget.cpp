@@ -10,6 +10,7 @@
 #include "notewidget.h"
 #include "shared_def.h"
 #include "newnotedialog.h"
+#include "noteitemdelegate.h"
 
 //#include "notemodel.h"
 using namespace vfx_shared;
@@ -22,18 +23,31 @@ NoteWidget::NoteWidget(QWidget *parent) : Inherited_t(parent)
     setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
 
     m_model = new NoteModel(this);
+    QSortFilterProxyModel *proxyModel = new MySortFilterProxyModel(this);
+    proxyModel->setSourceModel(m_model);
+    proxyModel->sort(0, Qt::DescendingOrder);
 
     m_newNoteWidget = new NewNoteWidget(this);
     m_newNoteWidget->editSearch()->setPlaceholderText(tr("Search string (NUY)", "Widgets"));
     m_newNoteWidget->buttonInsert()->setText("+");
 
     m_listWidget = new QListView(this);
-    m_listWidget->setModel(m_model);
+    m_listWidget->setModel(proxyModel);
+    //NoteItemDelegate *delegate = new NoteItemDelegate(this);
+    QFile f(QString(":/templates/NoteShowingTemplate.html"));
+    if (f.open(QFile::ReadOnly)){
+        m_template = f.readAll();
+    }
+    m_listWidget->setItemDelegate(new NoteItemDelegate(m_template, this));
+
 
     QLayout* l = new QVBoxLayout;
     l->addWidget( m_newNoteWidget );
     l->addWidget( m_listWidget );
     setLayout( l );
+
+    connect(m_listWidget, SIGNAL(doubleClicked(QModelIndex)), SLOT(onDblClicked(QModelIndex)));
+
 
 //    connect(m_listWidget, SIGNAL(itemActivated(QListWidgetItem*)), SLOT(onItemActivated(QListWidgetItem*)));
     connect(m_newNoteWidget->buttonInsert(), SIGNAL(clicked()), SLOT(newNoteClicked()));
@@ -71,13 +85,10 @@ NoteWidget::~NoteWidget()
 
 void NoteWidget::focusInEvent(QFocusEvent *event)
 {
-    // TODO Created FOCUS ! 16/05/28
-    LOG;
     m_listWidget->setFocus();
     if(m_listWidget->model()->rowCount()) {
         m_listWidget->setCurrentIndex(m_listWidget->model()->index(0, 0));
     }
-    LOG_TP(focusWidget()->metaObject()->className());
 }
 
 void NoteWidget::newNoteClicked()
@@ -87,6 +98,7 @@ void NoteWidget::newNoteClicked()
         LOG_TP(dlg->textEdit()->toPlainText());
         Note *note = new Note;
         note->setText(dlg->textEdit()->toPlainText());
+        note->setAsDel(0);
         m_model->add(note);
         setFocus();
     }
@@ -130,6 +142,13 @@ void NoteWidget::onCurrentItemChanged(QListWidgetItem *current, QListWidgetItem 
     if(btn) {
         btn->labelText()->setText("here");
     }
+}
+
+void NoteWidget::onDblClicked(const QModelIndex &index)
+{
+    qint32 id = index.data(NoteModel::NMR_Id).toInt();
+    m_model->markAsDeleted(id);
+    LOG_TP(id);
 }
 
 //void NoteWidget::makeItem(QListWidget *listWidget)

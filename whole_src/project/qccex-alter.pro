@@ -69,13 +69,15 @@ SOURCES += \
     shared/note.cpp \
     shared/sqlitestorage.cpp \
     shared/base_storage.cpp \
-    shared/sqlite_storage_v3.cpp \
+    shared/sqlitestorage_elements.cpp \
     shared/author.cpp \
     shared/authormodel.cpp\
     shared/shared_result.cpp \
     shared/storage_globals.cpp \
     shared/storagefactory.cpp \
-    shared/progressinfo.cpp
+    shared/progressinfo.cpp \
+    shared/sqlstorageelement.cpp \
+    shared/shared_const.cpp
 
 
 HEADERS  += \
@@ -86,12 +88,14 @@ HEADERS  += \
     shared/storage_globals.h \
     shared/sqlitestorage.h \
     shared/base_storage.h \
-    shared/sqlite_storage_v3.h \
+    shared/sqlitestorage_elements.h \
     shared/author.h \
     shared/authormodel.h \
     shared/shared_result.h \
     shared/storagefactory.h \
-    shared/progressinfo.h
+    shared/progressinfo.h \
+    shared/sqlstorageelement.h \
+    shared/shared_const.h
 
 RESOURCES += \
     qccex-alter.qrc \

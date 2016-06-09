@@ -86,9 +86,29 @@ void BaseStorage::clearNotes(qint64 id)
     doClearNotes(id);
 }
 
-void BaseStorage::addNotes(qint64 id, const QSharedPointer<QObject> &notes)
+//void BaseStorage::addNotes(qint64 id, const QSharedPointer<QObject> &notes)
+//{
+//    doAddNotes(id, notes);
+//}
+
+//void BaseStorage::addNotes2(qint64 id, const QVector<QSharedPointer<model::Note> > &notes)
+//{
+//    doAddNotes2(id, notes);
+//}
+
+void BaseStorage::addNotes3(qint64 id, const QSharedPointer<model::Notes> &notes)
 {
-    doAddNotes(id, notes);
+    doAddNotes3(id, notes);
+}
+
+void BaseStorage::markNotesAsDeleted(qint64 id, const QVector<qint32> &ids)
+{
+    doMarkNotesAsDeleted(id, ids);
+}
+
+void BaseStorage::removeNotes(qint64 id, const QVector<qint32> &ids)
+{
+    doRemoveNotes(id, ids);
 }
 
 void BaseStorage::fetchAuthors(qint64 id)

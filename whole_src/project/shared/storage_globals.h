@@ -18,8 +18,20 @@ namespace storage {
 
 extern const qint32 STORAGE_CURR_VER;
 
-typedef Result<qint32, QVariant> BoolVariantResult_t;
+typedef Result<bool, QVariant> BoolVariantResult_t;
 //typedef Result<qint32, QString> Int32Result_t;
+
+template <qint32 v>
+struct Int2Type {
+    enum { value = v };
+};
+
+typedef Int2Type<1> V1_t;
+typedef Int2Type<2> V2_t;
+typedef Int2Type<3> V3_t;
+typedef Int2Type<4> V4_t;
+typedef Int2Type<5> V5_t;
+
 
 }
 

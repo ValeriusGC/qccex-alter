@@ -2,6 +2,7 @@
 #include <QSqlError>
 
 #include "sqlite_storage_v2.h"
+#include "shared_const.h"
 
 //const qint32 storage::sqlite::v2::VERSION = 2;
 
@@ -31,11 +32,53 @@ const QString TableNote::QRY_CREATE     =
         QString(QStringLiteral("create table %1(%2 integer primary key, %3 integer, %4 varchar)"))
         .arg(TableNote::TBL_NAME).arg(TableNote::FLD_ID).arg(TableNote::FLD_FK_AUTHOR).arg(TableNote::FLD_TEXT);
 
+//const QString TableNote::TBL_NAME       = QStringLiteral("tbl_notes");
+//const QString TableNote::FLD_ID         = QStringLiteral("id");
+//const QString TableNote::FLD_TEXT       = QStringLiteral("the_text");
+//const QString TableNote::FLD_FK_AUTHOR  = QStringLiteral("fk_author");
+
+//BoolResult_t TableNote::doCreate(QSqlDatabase db)
+//{
+//    const QString QRY_CREATE     =
+//            QString(QStringLiteral("create table %1(%2 integer primary key, %3 integer, %4 varchar)"))
+//            .arg(TableNote::TBL_NAME).arg(TableNote::FLD_ID).arg(TableNote::FLD_FK_AUTHOR).arg(TableNote::FLD_TEXT);
+//    QSqlQuery q(db);
+//    if (!q.exec(QRY_CREATE)){
+//        return {false, q.lastError().text()};
+//    }
+//    return {true, ""};
+//}
+
+//BoolResult_t TableNote::doUpgradeFromV1(QSqlDatabase db)
+//{
+//    QSqlQuery q(db);
+//    const QString addAuthor =
+//            QString(QStringLiteral("ALTER TABLE %1 ADD COLUMN %2 integer"))
+//            .arg(TableNote::TBL_NAME).arg(TableNote::FLD_FK_AUTHOR);
+//    if (!q.exec(addAuthor)){
+//        return {false, q.lastError().text()};
+//    }
+//    return {true, ""};
+//}
+
+//BoolResult_t TableNote::doUpgradeFromV2(QSqlDatabase db)
+//{
+//    return doCreate(db);
+//}
+
+
+
+
+
 const QString TableAuthor::TBL_NAME     = QStringLiteral("tbl_authors");
 const QString TableAuthor::FLD_ID       = QStringLiteral("id");
 const QString TableAuthor::FLD_TITLE    = QStringLiteral("title");
 
-vfx_shared::BoolResult_t TableAuthor::create(QSqlDatabase db)
+//BoolResult_t TableAuthor::create(QSqlDatabase db)
+//{
+//}
+
+BoolResult_t TableAuthor::doCreate(QSqlDatabase db)
 {
     const QString QRY_CREATE      =
             QString(QStringLiteral("create table %1(%2 integer primary key, %3 varchar)"))
@@ -53,13 +96,22 @@ vfx_shared::BoolResult_t TableAuthor::create(QSqlDatabase db)
     if (!q.prepare(QRY_INSERT)){
         return {false, q.lastError().text()};
     }
-    q.addBindValue(QObject::tr("System user", "DB"));
+    q.addBindValue(model::Constants::DEFAULT_AUTHOR);
     if (!q.exec()){
         return {false, q.lastError().text()};
     }
     return {true, q.lastInsertId().toString()};
 }
 
+BoolResult_t TableAuthor::doUpgradeFromV1(QSqlDatabase db)
+{
+    return doCreate(db);
+}
+
+vfx_shared::BoolResult_t TableAuthor::doUpgradeFromV2(QSqlDatabase db)
+{
+    return doCreate(db);
+}
 
 } // namespace v2
 

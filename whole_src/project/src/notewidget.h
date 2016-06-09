@@ -46,11 +46,13 @@ private slots:
     void onBtnClicked();
     void onItemActivated(QListWidgetItem *item);
     void onCurrentItemChanged(QListWidgetItem * current, QListWidgetItem * previous);
+    void onDblClicked(const QModelIndex &index);
 
 private:
     NewNoteWidget *m_newNoteWidget;
     QListView *m_listWidget;
     model::NoteModel *m_model;
+    QString m_template;
 
 //    void makeItem(QListWidget *listWidget);
 };
