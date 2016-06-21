@@ -6,113 +6,81 @@
 using namespace storage;
 using nq::ProgressInfo;
 
-const qint32 BaseStorage::NEW_VERSION = storage::STORAGE_CURR_VER;
-
-BaseStorage::BaseStorage(QObject *parent)
-    : QObject(parent),
+StorageObjectOperations::StorageObjectOperations(QObject *parent)
+    : Inherited_t(parent),
       m_name(""),
       m_isInit(false)
+
 {
 
 }
 
-BaseStorage::~BaseStorage()
+StorageObjectOperations::~StorageObjectOperations()
 {
 
 }
 
-QString BaseStorage::name() const
+QString StorageObjectOperations::name() const
 {
     return m_name;
 }
 
-void BaseStorage::init(const QString &name)
+void StorageObjectOperations::init(const QString &name)
 {
-    // Just in this moment we check version too and upgrade it if needed.
-
     m_name = name;
-    const qint64 id = 0;
-    const qint32 max = 5;
+    const qint32 operId = 10;
 
-    emit fireInitProgress({id, ProgressInfo::TPS_Progress, 0, max, 1, tr("making tables", "DB")});
-    doCreateItems();
-    emit fireInitProgress({id, ProgressInfo::TPS_Progress, 0, max, 2, tr("check version", "DB")});
-    BoolVariantResult_t curr = doCheckVersion();
+    // Call doInit() from descendants.
+    BoolVariantResult_t res = doInit();
 
-    BoolResult_t res = {true, QString()};
-
-    if(curr.result() == false) {
-        emit fireInitProgress({id, ProgressInfo::TPS_Progress, 0, max, 3, tr("creating", "DB")});
-        res = doCreate();
+    m_isInit = res.result();
+    ProgressInfo::Status_e ps;
+    if(m_isInit) {
+        ps = ProgressInfo::TPS_Success;
     }else{
-        qint32 oldVersion = curr.data().toInt();
-        if(oldVersion != NEW_VERSION) {
-            res = doUpgrade(oldVersion);
-        }
+        ps = ProgressInfo::TPS_Error;
     }
-
-    if(res.result() == true) {
-        // In this case all is OK
-        m_isInit = true;
-        emit fireInitProgress(ProgressInfo());
-    }else{
-        emit fireInitProgress({id, ProgressInfo::TPS_Error, 0, max, max, res.data()});
-    }
-
-//    emit fireInitProgress({ProgressInfo::TPS_Error, 0, 0, 0, ""});
+    emit fireInitProgress({operId, ps, 0, 0, 0, res.data().toString()});
+    return;
 }
 
-bool BaseStorage::isInit() const
+bool StorageObjectOperations::isInit() const
 {
     return m_isInit;
 }
 
-BoolVariantResult_t BaseStorage::version() const
+void StorageObjectOperations::fetchNotes(qint64 taskId, const UuidVector_t &ids)
 {
-    if(!m_isInit) {
-        return {false, tr("Storage not initialized yet.")};
-    }
-
-    return {true, NEW_VERSION};
+    doFetchNotes(taskId, ids);
 }
 
-void BaseStorage::fetchNotes(qint64 id)
+void StorageObjectOperations::clearNotes(qint64 taskId)
 {
-    return doFetchNotes(id);
+    doClearNotes(taskId);
 }
 
-void BaseStorage::clearNotes(qint64 id)
+void StorageObjectOperations::addNotes(qint64 taskId, const QSharedPointer<model::Notes> &notes)
 {
-    doClearNotes(id);
+    doAddNotes(taskId, notes);
 }
 
-//void BaseStorage::addNotes(qint64 id, const QSharedPointer<QObject> &notes)
-//{
-//    doAddNotes(id, notes);
-//}
-
-//void BaseStorage::addNotes2(qint64 id, const QVector<QSharedPointer<model::Note> > &notes)
-//{
-//    doAddNotes2(id, notes);
-//}
-
-void BaseStorage::addNotes3(qint64 id, const QSharedPointer<model::Notes> &notes)
+void StorageObjectOperations::editNotes(qint64 taskId, const QSharedPointer<model::Notes> &notes)
 {
-    doAddNotes3(id, notes);
+    doEditNotes(taskId, notes);
 }
 
-void BaseStorage::markNotesAsDeleted(qint64 id, const QVector<qint32> &ids)
+void StorageObjectOperations::markNotesAsDeleted(qint64 taskId, const UuidVector_t &ids, bool setMark)
 {
-    doMarkNotesAsDeleted(id, ids);
+    doMarkNotesAsDeleted(taskId, ids, setMark);
 }
 
-void BaseStorage::removeNotes(qint64 id, const QVector<qint32> &ids)
+void StorageObjectOperations::removeNotes(qint64 taskId, const UuidVector_t &ids)
 {
-    doRemoveNotes(id, ids);
+    doRemoveNotes(taskId, ids);
 }
 
-void BaseStorage::fetchAuthors(qint64 id)
+void StorageObjectOperations::fetchAuthors(qint64 taskId)
 {
-    doFetchAuthors(id);
+    doFetchAuthors(taskId);
 }
 

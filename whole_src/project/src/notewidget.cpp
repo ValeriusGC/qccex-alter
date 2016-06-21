@@ -6,33 +6,45 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QLabel>
+#include <QUndoStack>
 
 #include "notewidget.h"
 #include "shared_def.h"
 #include "newnotedialog.h"
 #include "noteitemdelegate.h"
+#include "commands.h"
+#include "shared_utils.h"
+#include "sqlitestorage.h"
 
 //#include "notemodel.h"
 using namespace vfx_shared;
 using namespace model;
 using namespace nq;
 
-NoteWidget::NoteWidget(QWidget *parent) : Inherited_t(parent)
+#define ADD_NOTE_TASK_ID            101
+#define MARK_DEL_NOTE_TASK_ID       102
+
+NoteWidget::NoteWidget(QWidget *parent) :
+    Inherited_t(parent),
+    m_currentModelIndex(QModelIndex())
 {
     INC_THIS(true);
+    m_undoStack = new QUndoStack(this);
+
     setFrameStyle(QFrame::StyledPanel | QFrame::Plain);
 
     m_model = new NoteModel(this);
-    QSortFilterProxyModel *proxyModel = new MySortFilterProxyModel(this);
-    proxyModel->setSourceModel(m_model);
-    proxyModel->sort(0, Qt::DescendingOrder);
+//    QSortFilterProxyModel *proxyModel = new MySortFilterProxyModel(this);
+//    proxyModel->setSourceModel(m_model);
+//    proxyModel->sort(0, Qt::DescendingOrder);
 
     m_newNoteWidget = new NewNoteWidget(this);
-    m_newNoteWidget->editSearch()->setPlaceholderText(tr("Search string (NUY)", "Widgets"));
+//    m_newNoteWidget->editSearch()->setPlaceholderText(tr("Search string (NUY)", "Widgets"));
+    m_newNoteWidget->editSearch()->setObjectName("m_newNoteWidget_editSearch");
     m_newNoteWidget->buttonInsert()->setText("+");
 
     m_listWidget = new QListView(this);
-    m_listWidget->setModel(proxyModel);
+    m_listWidget->setModel(m_model);
     //NoteItemDelegate *delegate = new NoteItemDelegate(this);
     QFile f(QString(":/templates/NoteShowingTemplate.html"));
     if (f.open(QFile::ReadOnly)){
@@ -47,10 +59,10 @@ NoteWidget::NoteWidget(QWidget *parent) : Inherited_t(parent)
     setLayout( l );
 
     connect(m_listWidget, SIGNAL(doubleClicked(QModelIndex)), SLOT(onDblClicked(QModelIndex)));
-
-
 //    connect(m_listWidget, SIGNAL(itemActivated(QListWidgetItem*)), SLOT(onItemActivated(QListWidgetItem*)));
     connect(m_newNoteWidget->buttonInsert(), SIGNAL(clicked()), SLOT(newNoteClicked()));
+
+    connect(m_model, SIGNAL(modelReset()), SLOT(onModelReset()));
 //    connect(m_listWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
 //            SLOT(onCurrentItemChanged(QListWidgetItem*,QListWidgetItem*)));
 
@@ -76,6 +88,8 @@ NoteWidget::NoteWidget(QWidget *parent) : Inherited_t(parent)
 
     //    // Initially scroll to bottom
     //    logTableView->scrollToBottom();
+
+    retranslateUI();
 }
 
 NoteWidget::~NoteWidget()
@@ -83,25 +97,64 @@ NoteWidget::~NoteWidget()
     DEC_THIS(true);
 }
 
+QUndoStack *NoteWidget::undoStack() const
+{
+    return m_undoStack;
+}
+
 void NoteWidget::focusInEvent(QFocusEvent *event)
 {
     Q_UNUSED(event);
     m_listWidget->setFocus();
     if(m_listWidget->model()->rowCount()) {
-        m_listWidget->setCurrentIndex(m_listWidget->model()->index(0, 0));
+        LOG_TP(m_currentModelIndex << m_currentModelIndex.isValid());
+//        m_listWidget->setCurrentIndex(m_listWidget->model()->index(0, 0));
+        m_listWidget->setCurrentIndex(m_currentModelIndex.isValid() ? m_currentModelIndex
+                                                                    : m_listWidget->model()->index(0, 0));
     }
 }
 
 void NoteWidget::newNoteClicked()
 {
-    QScopedPointer<NewNoteDialog> dlg(new NewNoteDialog);
+    QScopedPointer<NewNoteDialog> dlg(new NewNoteDialog(QString()));
     if (dlg->exec() == QDialog::Accepted){
         LOG_TP(dlg->textEdit()->toPlainText());
-        Note *note = new Note;
+        Note *note = new Note(Utils::createBase64Uuid());
         note->setText(dlg->textEdit()->toPlainText());
-        note->setAsDel(0);
-        m_model->add(note);
+        m_currentModelIndex = m_listWidget->model()->index(0, 0);
+        m_undoStack->push(new AddNoteCommand(note));
         setFocus();
+    }
+}
+
+bool NoteWidget::event(QEvent *e)
+{
+    if(e->type() == QEvent::LanguageChange) {
+        retranslateUI();
+    }
+    return Inherited_t::event(e);
+}
+
+void NoteWidget::addNote()
+{
+    newNoteClicked();
+}
+
+void NoteWidget::delNote()
+{
+    QModelIndexList mil = m_listWidget->selectionModel()->selectedIndexes();
+    if(mil.count()) {
+        UuidVector_t ids;
+        ids.append(mil.at(0).data(NoteModel::NMR_Id).toString());
+        m_undoStack->push(new MarkAsDeletedCommand(ids));
+    }
+}
+
+void NoteWidget::editNote()
+{
+    QModelIndexList mil = m_listWidget->selectionModel()->selectedIndexes();
+    if(mil.count()) {
+        onDblClicked(mil.at(0));
     }
 }
 
@@ -148,9 +201,38 @@ void NoteWidget::onCurrentItemChanged(QListWidgetItem *current, QListWidgetItem 
 
 void NoteWidget::onDblClicked(const QModelIndex &index)
 {
-    qint32 id = index.data(NoteModel::NMR_Id).toInt();
-    m_model->markAsDeleted(id);
-    LOG_TP(id);
+    m_currentModelIndex = index;
+    LOG_TP(index);
+    LOG_TP(m_currentModelIndex);
+    const QString uuid = index.data(NoteModel::NMR_Id).toString();
+    QScopedPointer<NewNoteDialog> dlg(new NewNoteDialog(uuid));
+    if (dlg->exec() == QDialog::Accepted){
+        Note *oldNote = dlg->oldNote()->copy();
+        Note *editNote = dlg->editedNote()->copy();
+        editNote->setText(dlg->textEdit()->toPlainText());
+        editNote->setTsEdited(QDateTime::currentMSecsSinceEpoch());
+        m_undoStack->push(new EditNoteCommand(oldNote, editNote));
+        setFocus();
+    }
+}
+
+void NoteWidget::onModelReset()
+{
+    setFocus();
+}
+
+//void NoteWidget::onTaskProgress(const ProgressInfo &pi, const QVariant &sp)
+//{
+//    if(pi.status == ProgressInfo::TPS_Success) {
+//        m_storage->fetchNotes(TASK_ID_FETCH_NOTES);
+//    }
+////    if(pi.id == ADD_NOTE_TASK_ID) {
+////    }
+//}
+
+void NoteWidget::retranslateUI()
+{
+    m_newNoteWidget->editSearch()->setPlaceholderText(tr("Search string (NUY)", "Widgets"));
 }
 
 //void NoteWidget::makeItem(QListWidget *listWidget)

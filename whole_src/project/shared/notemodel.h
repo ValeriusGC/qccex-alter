@@ -5,6 +5,7 @@
 
 #include "note.h"
 #include "base_storage.h"
+#include "sqlengine.h"
 
 using namespace storage;
 
@@ -44,8 +45,8 @@ signals:
 
 public slots:
     void add(Note *note);
-    void markAsDeleted(qint32 id);
-    void remove(qint32 id);
+    void markAsDeleted(const UuidType_t &id);
+    void remove(const UuidType_t &id);
 
 private slots:
     void onTaskProgress(const nq::ProgressInfo &pi, const QVariant &sp);
@@ -55,8 +56,7 @@ private:
     //    QList<Note*> m_items;
     QHash<int, QByteArray> m_roles;
     QSharedPointer<Notes> m_items;
-    BaseStorage *m_storage;
-
+    BaseStorage<SqlEngineSharedPtr_t> *m_storage;
 };
 
 

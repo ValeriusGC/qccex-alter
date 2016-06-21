@@ -9,6 +9,10 @@ using namespace nq;
 QT_BEGIN_NAMESPACE
 class QSignalMapper;
 class QPushButton;
+class QUndoStack;
+class QMenuBar;
+class QMenu;
+class QUndoGroup;
 QT_END_NAMESPACE
 
 
@@ -28,18 +32,31 @@ private slots:
     void buttonClicked(QWidget *sender);
     void fireInitProgress(const nq::ProgressInfo &pi);
 
+    void add();
+
 
 private:
     QSignalMapper *m_signalMapper;
-
     QVector<QPushButton*> m_buttons;
+
+    QMenuBar *m_menuBar;
+    QMenu *m_menuEdit;
+    QUndoGroup *m_undoGroup;
+
+    QAction *m_undoAction;
+    QAction *m_redoAction;
+
+    QAction *m_addNewAction;
+    QAction *m_delAction;
+    QAction *m_editAction;
+
 
     void setupUi();
 
     void retranslateUi();
 
+    void createMenuBar(QMenuBar *parent);
     void createTestButtons(QWidget *parent);
-
     void createNotePanel(QWidget *parent);
 
     void init();

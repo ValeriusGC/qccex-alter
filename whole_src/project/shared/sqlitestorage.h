@@ -7,6 +7,8 @@
 #include "base_storage.h"
 #include "sqlstorageelement.h"
 #include "progressinfo.h"
+#include "sqlengine.h"
+
 using namespace nq;
 #include "note.h"
 #include "author.h"
@@ -24,15 +26,21 @@ QT_FORWARD_DECLARE_CLASS(BaseTable)
 /**
  * @brief The SqliteStorage class
  */
-class SqliteStorage : public BaseStorage, public sqlite::IStorageOperations
+class SqliteStorage : public BaseStorage<SqlEngineSharedPtr_t>
 {
     Q_OBJECT
     typedef BaseStorage Inhherited_t;
     typedef Result<Notes *, QString>  NotesResult_t;
+    typedef SqlEngineSharedPtr_t  SqlEngine_t;
 
 public:
-    explicit SqliteStorage(QObject *parent = 0);
-    ~SqliteStorage();
+
+    /**
+     * @brief instance (As Meyers singleton)
+     * @return singleton.
+     *
+     */
+    static SqliteStorage &instance();
 
     /**
      *  Returns list of table names, for information.
@@ -46,27 +54,27 @@ public:
 //    AuthorListResult_t getAuthors() const;
 
     // IStorageOperations interface
-    virtual BoolVariantResult_t doCreate(QSqlDatabase db);
-    virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V1_t &dummy);
-    virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V2_t &dummy);
-
-
+    virtual BoolVariantResult_t doCreate(const SqlEngine_t &engine);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &dummy);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &dummy);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &dummy);
 
 
 protected:
     // BaseStorage interface
-    virtual void doCreateItems();
-    virtual BoolVariantResult_t doCheckVersion() const;
-    virtual BoolResult_t doCreate();
-    virtual BoolResult_t doUpgrade(qint32 oldVersion);
-    virtual void doFetchNotes(qint64 id);
-    virtual void doClearNotes(qint64 id);
-//    virtual void doAddNotes(qint64 id, const QSharedPointer<QObject> &notes);
-//    virtual void doAddNotes2(qint64 id, const QVector<QSharedPointer<model::Note>> &notes);
-    virtual void doAddNotes3(qint64 id, const QSharedPointer<model::Notes> &notes);
-    virtual void doMarkNotesAsDeleted(qint64 id, const QVector<qint32> &ids);
-    virtual void doRemoveNotes(qint64 id, const QVector<qint32> &ids);
-    virtual void doFetchAuthors(qint64 id);
+    virtual void doReset(SqlEngineSharedPtr_t engine);
+    virtual EngineResult_t makeWritableEngine() const;
+    virtual void doCreateItems(SqlEngineSharedPtr_t engine);
+    virtual BoolVariantResult_t doCheckVersion(SqlEngineSharedPtr_t engine) const;
+//    virtual BoolResult_t doCreate();
+//    virtual BoolResult_t doUpgrade(qint32 oldVersion);
+    virtual void doFetchNotes(qint64 taskId, const UuidVector_t &ids);
+    virtual void doClearNotes(qint64 taskId);
+    virtual void doAddNotes(qint64 taskId, const QSharedPointer<model::Notes> &notes);
+    virtual void doEditNotes(qint64 taskId, const QSharedPointer<model::Notes> &notes);
+    virtual void doMarkNotesAsDeleted(qint64 taskId, const UuidVector_t &ids, bool setMark);
+    virtual void doRemoveNotes(qint64 taskId, const UuidVector_t &ids);
+    virtual void doFetchAuthors(qint64 taskId);
 
 signals:    
     void fireTaskFinished();
@@ -74,8 +82,15 @@ signals:
 public slots:
 
 private:
-    typedef QSharedPointer <IStorageOperations> StoragePtr_t;
+    typedef QSharedPointer < StorageDDLOperations <SqlEngineSharedPtr_t> > StoragePtr_t;
     QMap< QString, StoragePtr_t > m_tableMap;
+
+
+    explicit SqliteStorage(QObject *parent = 0);
+    ~SqliteStorage();
+    SqliteStorage(SqliteStorage &);
+    SqliteStorage &operator =(SqliteStorage &);
+
 
     /**
      *  Inner fetching
@@ -83,71 +98,7 @@ private:
      * @param id
      * @return
      */
-    NotesResult_t _fetch(QSqlDatabase db);
-
-    BoolResult_t upgradeFromV1();
-    BoolResult_t upgradeFromV2();
-
-};
-
-
-/**
- * @brief The DbHelper class
- */
-class DbHelper Q_DECL_FINAL{
-
-public:
-DbHelper(const QString &name) : m_result(false, QVariant()){
-    INC_THIS(false);
-    m_db = QSqlDatabase::database();
-    if(!m_db.isOpen()) {
-        m_db = QSqlDatabase::addDatabase("QSQLITE");
-        m_db.setDatabaseName(name);
-        if (!m_db.open()){
-            m_result = {false, m_db.lastError().text()};
-        }
-    }
-
-    if(m_db.isOpen()) {
-        if(!m_db.transaction()) {
-            m_result = {false, m_db.lastError().text()};
-        }else{
-//            LOG_TP("TRANSACTION IS ON" << ++m_counter);
-            m_result = {true, QVariant()};
-        }
-    }
-
-}
-
-~DbHelper() {
-    if(m_result.result()) {
-        /*bool ok = */
-        m_db.commit();
-//        LOG_TP("COMMIT" << ok << --m_counter);
-    }else{
-        /*bool ok = */
-        m_db.rollback();
-//        LOG_TP("ROLLBACK" << ok << --m_counter);
-    }
-    m_db.close();
-    DEC_THIS(false);
-}
-
-QSqlDatabase db() const {
-    return m_db;
-}
-
-BoolVariantResult_t &result() {
-    return m_result;
-}
-
-private:
-    QSqlDatabase m_db;
-    static qint32 m_testCounter;
-    BoolVariantResult_t m_result;
-
-    DbHelper(DbHelper&);
-    DbHelper &operator=(DbHelper);
+    NotesResult_t _fetch(QSqlDatabase db, const UuidVector_t &ids);
 
 };
 

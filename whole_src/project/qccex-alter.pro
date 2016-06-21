@@ -74,10 +74,11 @@ SOURCES += \
     shared/authormodel.cpp\
     shared/shared_result.cpp \
     shared/storage_globals.cpp \
-    shared/storagefactory.cpp \
     shared/progressinfo.cpp \
     shared/sqlstorageelement.cpp \
-    shared/shared_const.cpp
+    shared/shared_const.cpp \
+    shared/shared_utils.cpp \
+    shared/sqlengine.cpp
 
 
 HEADERS  += \
@@ -92,10 +93,11 @@ HEADERS  += \
     shared/author.h \
     shared/authormodel.h \
     shared/shared_result.h \
-    shared/storagefactory.h \
     shared/progressinfo.h \
     shared/sqlstorageelement.h \
-    shared/shared_const.h
+    shared/shared_const.h \
+    shared/shared_utils.h \
+    shared/sqlengine.h
 
 RESOURCES += \
     qccex-alter.qrc \

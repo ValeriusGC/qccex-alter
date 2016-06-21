@@ -55,9 +55,10 @@ SOURCES *= $$files(*.cpp) \
     ../shared/notemodel.cpp \
     ../shared/authormodel.cpp \
     ../shared/progressinfo.cpp \
-    ../shared/storagefactory.cpp \
     ../shared/sqlstorageelement.cpp \
-    ../shared/shared_const.cpp
+    ../shared/shared_const.cpp \
+    ../shared/shared_utils.cpp \
+    ../shared/sqlengine.cpp
 
 HEADERS *= $$files(*.h) \
             ../src/settings.h  \
@@ -82,9 +83,10 @@ HEADERS *= $$files(*.h) \
     ../shared/notemodel.h \
     ../shared/authormodel.h \
     ../shared/progressinfo.h \
-    ../shared/storagefactory.h \
     ../shared/sqlstorageelement.h \
-    ../shared/shared_const.h
+    ../shared/shared_const.h \
+    ../shared/shared_utils.h \
+    ../shared/sqlengine.h
 
 CONFIG += debug
 # nullptr and other new C++ features

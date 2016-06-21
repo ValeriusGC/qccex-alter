@@ -4,7 +4,7 @@
 
 #include "notemodel.h"
 #include "shared_def.h"
-#include "storagefactory.h"
+#include "sqlitestorage.h"
 
 using namespace model;
 using namespace vfx_shared;
@@ -14,18 +14,20 @@ NoteModel::NoteModel(QObject *parent)
     : Inherited_t(parent)
 {
     INC_THIS(false);
-    // qRegisterMetaType for quee signals/slots between threads.
-    qRegisterMetaType<QSharedPointer<model::Notes>>("QSharedPointer<model::Notes>");
+    // qRegisterMetaType for queue signals/slots between threads.
+    qRegisterMetaType< QSharedPointer<model::Notes> >("QSharedPointer<model::Notes>");
 
     m_roles[NMR_Id] = "id";
     m_roles[NMR_Del] = "del";
 
     m_items = QSharedPointer<Notes>::create();
-    m_storage = StorageFactory::instance().make("sqlite");
-    if(m_storage && m_storage->isInit()) {
-        connect(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)), SLOT(onTaskProgress(nq::ProgressInfo,QVariant)));
-        connect(m_storage, SIGNAL(fireTaskNoteProgress(nq::ProgressInfo,QSharedPointer<model::Notes>)), SLOT(onTaskNoteProgress(nq::ProgressInfo,QSharedPointer<model::Notes>)));
-        m_storage->fetchNotes(10);
+    m_storage = &SqliteStorage::instance();
+    if(m_storage->isInit()) {
+        connect(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)),
+                SLOT(onTaskProgress(nq::ProgressInfo,QVariant)));
+        connect(m_storage, SIGNAL(fireTaskNoteProgress(nq::ProgressInfo,QSharedPointer<model::Notes>)),
+                SLOT(onTaskNoteProgress(nq::ProgressInfo,QSharedPointer<model::Notes>)));
+        m_storage->fetchNotes(TASK_ID_FETCH_NOTES, UuidVector_t());
     }
 
 }
@@ -62,17 +64,16 @@ QVariant NoteModel::data(const QModelIndex &index, int role) const
     }
 
     Note *item = m_items->items[indexRow];
-    if(item->asDel()) {
-        LOG_TP(item->text());
-    }
     //    const QString dt = QDateTime::fromMSecsSinceEpoch(item.msecs()).toString(QString("MM-dd hh:mm:ss.zzz"));
     const bool odd = indexRow % 2;
 
     switch (role) {
     case NMR_Id:
-        return item->id();
+        return item->uuid();
     case NMR_TsCreated:
         return item->tsCreated();
+    case NMR_TsEdited:
+        return item->tsEdited();
     case Qt::DisplayRole:
         return item->text();
     case NMR_Debug:
@@ -90,51 +91,46 @@ QVariant NoteModel::data(const QModelIndex &index, int role) const
 
 void NoteModel::add(Note *note)
 {
-    Notes *n = new Notes;
-    LOG_TP(note->tsCreated());
-    n->items.append(note);
-    QSharedPointer<Notes> sp(n);
-    m_storage->addNotes3(10, sp);
+    QSharedPointer<Notes> sp(new Notes);
+    sp->items.append(note);
+    m_storage->addNotes(10, sp);
 }
 
-void NoteModel::markAsDeleted(qint32 id)
+void NoteModel::markAsDeleted(const UuidType_t &id)
 {
-    QVector<qint32> ids;
+    UuidVector_t ids;
     ids.append(id);
-    m_storage->markNotesAsDeleted(20, ids);
+    m_storage->markNotesAsDeleted(20, ids, true);
 }
 
-void NoteModel::remove(qint32 id)
+void NoteModel::remove(const UuidType_t &id)
 {
     Q_UNUSED(id);
 }
 
 void NoteModel::onTaskProgress(const nq::ProgressInfo &pi, const QVariant &sp)
 {
-    if(pi.id==10 && pi.status == ProgressInfo::TPS_Success) {
-        QSharedPointer<Notes> spnl = sp.value< QSharedPointer<Notes> >();
-        beginResetModel();
-        foreach (auto item, m_items->items) {
-            delete item;
+    if(pi.status == ProgressInfo::TPS_Success) {
+        if(pi.id == TASK_ID_FETCH_NOTES) {
+            QSharedPointer<Notes> spnl = sp.value< QSharedPointer<Notes> >();
+            beginResetModel();
+
+
+
+//            const qint32 selRow =
+
+            foreach (auto item, m_items->items) {
+                delete item;
+            }
+            m_items->items.clear();
+            Notes *notes = spnl.data();
+            while(notes->items.count()){
+                m_items->items.append(notes->items.takeFirst());
+            }
+            endResetModel();
+        }else{
+            m_storage->fetchNotes(TASK_ID_FETCH_NOTES, UuidVector_t());
         }
-        m_items->items.clear();
-        Notes *notes = spnl.data();
-        while(notes->items.count()){
-            m_items->items.append(notes->items.takeFirst());
-        }
-        endResetModel();
-    }else if(pi.id==20 && pi.status == ProgressInfo::TPS_Success){
-        QSharedPointer<Notes> spnl = sp.value< QSharedPointer<Notes> >();
-        beginResetModel();
-        foreach (auto item, m_items->items) {
-            delete item;
-        }
-        m_items->items.clear();
-        Notes *notes = spnl.data();
-        while(notes->items.count()){
-            m_items->items.append(notes->items.takeFirst());
-        }
-        endResetModel();
     }
 }
 

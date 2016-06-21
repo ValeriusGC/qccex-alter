@@ -48,17 +48,15 @@ void TestSqliteStorage::cleanup()
 //    storage::CURR_VERSION = storage::V1;
     // Deletes physical file;
     // Deletes storage (and QSqlDatabase)
-    delete m_storage;
     m_storage = nullptr;
 }
 
 void TestSqliteStorage::testCreateV3()
 {
     // 1.
-    m_storage = new SqliteStorage();
+    m_storage = &SqliteStorage::instance();
     QSignalSpy spy(m_storage, SIGNAL(fireInitProgress(nq::ProgressInfo)));
     //m_spies.append(new QSignalSpy(m_storage, SIGNAL(fireInitProgress(ProgressInfo))));
-    QVERIFY2(m_storage->isInit()==false, "Check isInit before init()");
 
     // Version is 1
     m_storage->init(m_dbName);
@@ -67,11 +65,6 @@ void TestSqliteStorage::testCreateV3()
     QList<QVariant> arguments = spy.takeLast(); // take the last signal
     ProgressInfo pi = arguments.at(0).value<ProgressInfo>();
     QVERIFY2(pi.status == ProgressInfo::TPS_Success, pi.message.toLatin1());
-
-    // Check version
-    BoolVariantResult_t ver = m_storage->version();
-    QVERIFY2(ver.result() == true, ver.data().toString().toLatin1());
-    QVERIFY(ver.data().toInt() == 3);
 
     BoolVariantResult_t tablesRes = m_storage->tables();
     QVERIFY2(tablesRes.result() == true, tablesRes.data().toString().toLatin1());
@@ -97,7 +90,7 @@ void TestSqliteStorage::testUpgradeV1V3()
     BoolVariantResult_t v1Created = createV1();
     QVERIFY2(v1Created.result(), v1Created.data().toString().toLatin1());
 
-    m_storage = new SqliteStorage();
+    m_storage = &SqliteStorage::instance();
     QSignalSpy spy(m_storage, SIGNAL(fireInitProgress(nq::ProgressInfo)));
     m_storage->init(m_dbName);
     // Wait some time for initialization
@@ -105,10 +98,6 @@ void TestSqliteStorage::testUpgradeV1V3()
     QList<QVariant> arguments = spy.takeLast(); // take the last signal
     ProgressInfo pi = arguments.at(0).value<ProgressInfo>();
     QVERIFY2(pi.status == ProgressInfo::TPS_Success, pi.message.toLatin1());
-    // Check version
-    BoolVariantResult_t ver = m_storage->version();
-    QVERIFY2(ver.result() == true, ver.data().toString().toLatin1());
-    QVERIFY(ver.data().toInt() == 3);
 
     BoolVariantResult_t tablesRes = m_storage->tables();
     QVERIFY2(tablesRes.result() == true, tablesRes.data().toString().toLatin1());
@@ -132,7 +121,7 @@ void TestSqliteStorage::testUpgradeV1V3()
         QSignalSpy spyTask(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
         const qint64 id = QDateTime::currentMSecsSinceEpoch();
         //
-        m_storage->fetchNotes(id);
+        m_storage->fetchNotes(id, UuidVector_t());
         QTest::qWait(m_initTime);
         QList<QVariant> arguments = spyTask.takeLast(); // take the last signal
         ProgressInfo pi = arguments.at(0).value<ProgressInfo>();
@@ -154,7 +143,7 @@ void TestSqliteStorage::testUpgradeV2V3()
     BoolVariantResult_t v2Created = createV2();
     QVERIFY2(v2Created.result(), v2Created.data().toString().toLatin1());
 
-    m_storage = new SqliteStorage();
+    m_storage = &SqliteStorage::instance();
     QSignalSpy spy(m_storage, SIGNAL(fireInitProgress(nq::ProgressInfo)));
     m_storage->init(m_dbName);
     // Wait some time for initialization
@@ -162,10 +151,6 @@ void TestSqliteStorage::testUpgradeV2V3()
     QList<QVariant> arguments = spy.takeLast(); // take the last signal
     ProgressInfo pi = arguments.at(0).value<ProgressInfo>();
     QVERIFY2(pi.status == ProgressInfo::TPS_Success, pi.message.toLatin1());
-    // Check version
-    BoolVariantResult_t ver = m_storage->version();
-    QVERIFY2(ver.result() == true, ver.data().toString().toLatin1());
-    QVERIFY(ver.data().toInt() == 3);
 
     BoolVariantResult_t tablesRes = m_storage->tables();
     QVERIFY2(tablesRes.result() == true, tablesRes.data().toString().toLatin1());
@@ -180,7 +165,7 @@ void TestSqliteStorage::testUpgradeV2V3()
     {
         QSignalSpy spyTask(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
         const qint64 id = QDateTime::currentMSecsSinceEpoch();
-        m_storage->fetchNotes(id);
+        m_storage->fetchNotes(id, UuidVector_t());
         QTest::qWait(m_initTime);
         QList<QVariant> arguments = spyTask.takeLast(); // take the last signal
         ProgressInfo pi = arguments.at(0).value<ProgressInfo>();
@@ -205,7 +190,7 @@ void TestSqliteStorage::testUpgradeV2V3()
         QVERIFY(sp);
         QSharedPointer<AuthorModel> spnl = qSharedPointerDynamicCast<AuthorModel>(sp);
         QVERIFY(spnl);
-        QCOMPARE(spnl->data().count(), 2);
+        QCOMPARE(spnl->data().count(), 1);
     }
 }
 
@@ -312,14 +297,13 @@ BoolVariantResult_t TestSqliteStorage::createV2()
     QVariant authId;
     {
         // 'Author' table and data
-        BoolResult_t created = v2::TableAuthor().init(db, v2::TableAuthor::INVALID_VERSION);
-        if (!created.result()){
-            return {created.result(), created.data()};
+        QSqlQuery q(db);
+        if (!q.exec(v2::TableAuthor::QRY_CREATE)){
+            return {false, q.lastError().text()};
         }
 
         const QString QRY_INSERT(QStringLiteral("insert into %1(%2) values(?)")
                                  .arg(v2::TableAuthor::TBL_NAME).arg(v2::TableAuthor::FLD_TITLE));
-        QSqlQuery q(db);
         if (!q.prepare(QRY_INSERT)){
             return {false, q.lastError().text()};
         }

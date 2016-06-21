@@ -19,6 +19,19 @@ namespace storage {
 extern const qint32 STORAGE_CURR_VER;
 
 typedef Result<bool, QVariant> BoolVariantResult_t;
+
+/**
+ * @brief UuidType_t
+ */
+typedef QString UuidType_t;
+
+/**
+ *  Stores collection of UUID's for mass operation.
+ *  Earlier it was <qint32>, now QString. Who knows what will else?
+ * @brief UuidVector_t
+ */
+typedef QVector<UuidType_t> UuidVector_t;
+
 //typedef Result<qint32, QString> Int32Result_t;
 
 template <qint32 v>

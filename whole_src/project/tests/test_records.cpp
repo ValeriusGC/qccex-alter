@@ -1,9 +1,11 @@
 #include <QSignalSpy>
 #include <QList>
 #include <QVariant>
+#include <QUuid>
 
 #include "test_records.h"
 #include "test_common_defs.h"
+#include "shared_utils.h"
 
 TestRecords::TestRecords(QObject *parent) : QObject(parent)
 {
@@ -23,7 +25,7 @@ void TestRecords::initTestCase()
     QVERIFY2(m_storage==nullptr, "m_storage == nullptr");
 
     // 1. Creates DB
-    m_storage = new SqliteStorage();
+    m_storage = &SqliteStorage::instance();
     QSignalSpy spy(m_storage, SIGNAL(fireInitProgress(nq::ProgressInfo)));
     QVERIFY2(m_storage->isInit()==false, "Check isInit before init()");
     m_storage->init(m_dbName);
@@ -35,7 +37,6 @@ void TestRecords::initTestCase()
 
 void TestRecords::cleanupTestCase()
 {
-    delete m_storage;
     m_storage = nullptr;
 }
 
@@ -56,7 +57,7 @@ void TestRecords::init()
     {
         QSignalSpy spy(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
         const qint64 id = QDateTime::currentMSecsSinceEpoch();
-        m_storage->fetchNotes(id);
+        m_storage->fetchNotes(id, UuidVector_t());
         QTest::qWait(m_waitTime);
         QList<QVariant> arguments = spy.takeLast(); // take the last signal
         ProgressInfo pi = arguments.at(0).value<ProgressInfo>();
@@ -116,7 +117,7 @@ void TestRecords::testAddNote3()
     {
         // Just test for memory control.
         model::Notes *mn1 = new Notes;
-        mn1->items.append(new Note);
+        mn1->items.append(new Note(Utils::createBase64Uuid()));
         model::Notes *mn2 = mn1;
         QSharedPointer<model::Notes> sp1(mn1);
         QVariant v1 = QVariant::fromValue(sp1);
@@ -127,7 +128,7 @@ void TestRecords::testAddNote3()
         bool b1 = sp1.isNull();
         bool b2 = sp2.isNull();
         bool b3 = sp2.isNull();
-        sp3->items.append(new Note);
+        sp3->items.append(new Note(Utils::createBase64Uuid()));
         Q_UNUSED(mn2);
         Q_UNUSED(b1);
         Q_UNUSED(b2);
@@ -143,13 +144,13 @@ void TestRecords::testAddNote3()
         QSignalSpy spy(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));
         Notes *notes = new Notes;
         for(int i=0; i < cnt; ++i){
-            Note *n = new Note();
+            Note *n = new Note(Utils::createBase64Uuid());
             n->setAuthorId(i%3);
             notes->items.append(n);
         }
 
         const qint64 id = QDateTime::currentMSecsSinceEpoch();
-        m_storage->addNotes3(id, QSharedPointer<Notes>(notes));
+        m_storage->addNotes(id, QSharedPointer<Notes>(notes));
         QTest::qWait(m_waitTime);
         QList<QVariant> arguments = spy.takeLast(); // take the last signal
         ProgressInfo pi = arguments.at(0).value<ProgressInfo>();
@@ -162,5 +163,26 @@ void TestRecords::testAddNote3()
         QVERIFY(sp);
         QCOMPARE(sp->items.count(), cnt);
     }
+}
+
+void TestRecords::testBase64Unique()
+{
+    const qint32 cnt = 1000;
+    for(int i=0; i<cnt; ++i) {
+        QUuid uuid1 = QUuid::createUuid();
+        QByteArray rfc = uuid1.toRfc4122();
+        QUuid uuid2 = QUuid::fromRfc4122(rfc);
+        QVERIFY2(uuid1==uuid2, QString("index %1").arg(i).toLatin1());
+    }
+    QVector<QString> bases64;
+    bases64.reserve(cnt);
+    for(int i=0; i<cnt; ++i) {
+        QByteArray base64 = QUuid::createUuid().toRfc4122().toBase64();
+        bool exists = bases64.contains(base64);
+        QVERIFY2(!exists, QString("index %1").arg(i).toLatin1());
+        bases64.append(base64);
+    }
+    const bool ok = bases64.count() == cnt;
+    QVERIFY(ok);
 }
 

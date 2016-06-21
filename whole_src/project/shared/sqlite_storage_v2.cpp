@@ -20,7 +20,7 @@ const QString TableCfg::FLD_KEY         = QStringLiteral("the_key");
 const QString TableCfg::FLD_VALUE       = QStringLiteral("the_value");
 const QString TableCfg::FLD_DESCR       = QStringLiteral("descr");
 const QString TableCfg::QRY_CREATE      =
-        QString(QStringLiteral("create table %1(%2 integer primary key, %3 varchar, %4 varchar, %5 varchar)"))
+        QString(QStringLiteral("CREATE TABLE %1(%2 INTEGER PRIMARY KEY ASC, %3 VARCHAR, %4 VARCHAR, %5 VARCHAR)"))
         .arg(TableCfg::TBL_NAME).arg(TableCfg::FLD_ID).arg(TableCfg::FLD_KEY)
         .arg(TableCfg::FLD_VALUE).arg(TableCfg::FLD_DESCR);
 
@@ -29,42 +29,8 @@ const QString TableNote::FLD_ID         = QStringLiteral("id");
 const QString TableNote::FLD_TEXT       = QStringLiteral("the_text");
 const QString TableNote::FLD_FK_AUTHOR  = QStringLiteral("fk_author");
 const QString TableNote::QRY_CREATE     =
-        QString(QStringLiteral("create table %1(%2 integer primary key, %3 integer, %4 varchar)"))
+        QString(QStringLiteral("CREATE TABLE %1(%2 INTEGER PRIMARY KEY ASC, %3 INTEGER, %4 VARCHAR)"))
         .arg(TableNote::TBL_NAME).arg(TableNote::FLD_ID).arg(TableNote::FLD_FK_AUTHOR).arg(TableNote::FLD_TEXT);
-
-//const QString TableNote::TBL_NAME       = QStringLiteral("tbl_notes");
-//const QString TableNote::FLD_ID         = QStringLiteral("id");
-//const QString TableNote::FLD_TEXT       = QStringLiteral("the_text");
-//const QString TableNote::FLD_FK_AUTHOR  = QStringLiteral("fk_author");
-
-//BoolResult_t TableNote::doCreate(QSqlDatabase db)
-//{
-//    const QString QRY_CREATE     =
-//            QString(QStringLiteral("create table %1(%2 integer primary key, %3 integer, %4 varchar)"))
-//            .arg(TableNote::TBL_NAME).arg(TableNote::FLD_ID).arg(TableNote::FLD_FK_AUTHOR).arg(TableNote::FLD_TEXT);
-//    QSqlQuery q(db);
-//    if (!q.exec(QRY_CREATE)){
-//        return {false, q.lastError().text()};
-//    }
-//    return {true, ""};
-//}
-
-//BoolResult_t TableNote::doUpgradeFromV1(QSqlDatabase db)
-//{
-//    QSqlQuery q(db);
-//    const QString addAuthor =
-//            QString(QStringLiteral("ALTER TABLE %1 ADD COLUMN %2 integer"))
-//            .arg(TableNote::TBL_NAME).arg(TableNote::FLD_FK_AUTHOR);
-//    if (!q.exec(addAuthor)){
-//        return {false, q.lastError().text()};
-//    }
-//    return {true, ""};
-//}
-
-//BoolResult_t TableNote::doUpgradeFromV2(QSqlDatabase db)
-//{
-//    return doCreate(db);
-//}
 
 
 
@@ -73,45 +39,45 @@ const QString TableNote::QRY_CREATE     =
 const QString TableAuthor::TBL_NAME     = QStringLiteral("tbl_authors");
 const QString TableAuthor::FLD_ID       = QStringLiteral("id");
 const QString TableAuthor::FLD_TITLE    = QStringLiteral("title");
+const QString TableAuthor::QRY_CREATE     =
+        QString(QStringLiteral("CREATE TABLE %1(%2 INTEGER PRIMARY KEY ASC, %3 VARCHAR)"))
+        .arg(TableAuthor::TBL_NAME).arg(TableAuthor::FLD_ID).arg(TableAuthor::FLD_TITLE);
 
-//BoolResult_t TableAuthor::create(QSqlDatabase db)
+
+//BoolResult_t TableAuthor::doCreate(QSqlDatabase db)
 //{
+//    const QString QRY_CREATE      =
+//            QString(QStringLiteral("CREATE TABLE %1(%2 INTEGER PRIMARY KEY ASC, %3 VARCHAR)"))
+//            .arg(TableAuthor::TBL_NAME).arg(TableAuthor::FLD_ID).arg(TableAuthor::FLD_TITLE);
+
+//    QSqlQuery q(db);
+//    if (!q.exec(QRY_CREATE)){
+//        return {false, q.lastError().text()};
+//    }
+
+//    // 'System author': default value for "orphan" notes.
+//    const QString QRY_INSERT(QStringLiteral("INSERT INTO %1(%2) VALUES(?)")
+//                             .arg(TableAuthor::TBL_NAME).arg(TableAuthor::FLD_TITLE));
+
+//    if (!q.prepare(QRY_INSERT)){
+//        return {false, q.lastError().text()};
+//    }
+//    q.addBindValue(model::Constants::DEFAULT_AUTHOR);
+//    if (!q.exec()){
+//        return {false, q.lastError().text()};
+//    }
+//    return {true, q.lastInsertId().toString()};
 //}
 
-BoolResult_t TableAuthor::doCreate(QSqlDatabase db)
-{
-    const QString QRY_CREATE      =
-            QString(QStringLiteral("create table %1(%2 integer primary key, %3 varchar)"))
-            .arg(TableAuthor::TBL_NAME).arg(TableAuthor::FLD_ID).arg(TableAuthor::FLD_TITLE);
+//BoolResult_t TableAuthor::doUpgradeFromV1(QSqlDatabase db)
+//{
+//    return doCreate(db);
+//}
 
-    QSqlQuery q(db);
-    if (!q.exec(QRY_CREATE)){
-        return {false, q.lastError().text()};
-    }
-
-    // 'System author': default value for "orphan" notes.
-    const QString QRY_INSERT(QStringLiteral("insert into %1(%2) values(?)")
-                             .arg(TableAuthor::TBL_NAME).arg(TableAuthor::FLD_TITLE));
-
-    if (!q.prepare(QRY_INSERT)){
-        return {false, q.lastError().text()};
-    }
-    q.addBindValue(model::Constants::DEFAULT_AUTHOR);
-    if (!q.exec()){
-        return {false, q.lastError().text()};
-    }
-    return {true, q.lastInsertId().toString()};
-}
-
-BoolResult_t TableAuthor::doUpgradeFromV1(QSqlDatabase db)
-{
-    return doCreate(db);
-}
-
-vfx_shared::BoolResult_t TableAuthor::doUpgradeFromV2(QSqlDatabase db)
-{
-    return doCreate(db);
-}
+//vfx_shared::BoolResult_t TableAuthor::doUpgradeFromV2(QSqlDatabase db)
+//{
+//    return doCreate(db);
+//}
 
 } // namespace v2
 

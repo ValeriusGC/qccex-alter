@@ -142,12 +142,10 @@ void Settings::setApplicationLocale(const QString &localeName)
 //    qDebug() << qApp->applicationDirPath();
 
     // For what it need, if i should call retranslateUI???
-//    QWidgetList wl = QApplication::allWidgets();
-//    for(int i = 0; i < wl.size(); ++i) {
-//        wl[i]->setLocale(locale);
-//        LOG1(wl[i]->objectName());
-//    }
-
+    QWidgetList wl = QApplication::allWidgets();
+    for(int i = 0; i < wl.size(); ++i) {
+        relocalize(wl[i], locale);
+    }
     setValue(Settings::Keys::General::Locale, localeName);
 }
 
@@ -172,7 +170,6 @@ QString Settings::makeAppTitle(const QString &extraString)
     return m_title;
 }
 
-
 Settings::Settings() : QSettings(getFileName(), QSettings::IniFormat)
 {
     INC_THIS(true);
@@ -181,5 +178,17 @@ Settings::Settings() : QSettings(getFileName(), QSettings::IniFormat)
 Settings::~Settings()
 {
     DEC_THIS(true);
+}
+
+void Settings::relocalize(QWidget *parent, QLocale locale)
+{
+    parent->setLocale(locale);
+    QObjectList ol = parent->children();
+    for(int i = 0; i < ol.size(); ++i) {
+        QWidget *sw = dynamic_cast<QWidget *>(ol[i]);
+        if(sw) {
+            relocalize(sw, locale);
+        }
+    }
 }
 

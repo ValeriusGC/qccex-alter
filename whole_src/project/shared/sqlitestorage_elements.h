@@ -6,14 +6,15 @@
 
 #include "shared_result.h"
 #include "sqlstorageelement.h"
+#include "sqlengine.h"
 
 namespace storage {
 
 namespace sqlite {
 
-//  1. Changed tables 'tbl_config', 'tbl_author', 'tbl_note'
+typedef SqlEngineSharedPtr_t  SqlEngine_t;
 
-struct TableCfg : public IStorageOperations {
+struct TableCfg : public StorageDDLOperations<SqlEngine_t> {
 
     TableCfg();
     ~TableCfg();
@@ -27,23 +28,31 @@ struct TableCfg : public IStorageOperations {
     static const QString FLD_TS_CREATE;
     static const QString FLD_TS_EDIT;
 
-    protected:
-        // StorageElement interface
-        virtual BoolVariantResult_t doCreate(QSqlDatabase db);
-        virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V1_t &fromVersion);
-        virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V2_t &fromVersion);
-//        virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
-//        virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
+protected:
+    // StorageElement interface
+    virtual BoolVariantResult_t doCreate(const SqlEngine_t &engine);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion);
+    //        virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
+    //        virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
+private:
+    BoolVariantResult_t updateVersion(SqlEngineSharedPtr_t enginePtr);
 };
 
-struct TableNote : public IStorageOperations  {
+struct TableNote : public StorageDDLOperations<SqlEngineSharedPtr_t>  {
+
     //  Added fields
     //  'ts_create' : creation timestamp
     //  'ts_edit' : last edit timestamp
     //  'del' : marker for deleted record
 
+    // V4:
+    // Added field FLD_UUID - for UUID (in RFC4122 and packed to string as BASE64)
+
     static const QString TBL_NAME;
     static const QString FLD_ID;
+    static const QString FLD_UUID;
     static const QString FLD_TEXT;
     static const QString FLD_FK_AUTHOR;
     static const QString FLD_TS_CREATE;
@@ -52,21 +61,26 @@ struct TableNote : public IStorageOperations  {
 
 protected:
     // StorageElement interface
-    virtual BoolVariantResult_t doCreate(QSqlDatabase db);
-    virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V1_t &fromVersion);
-    virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V2_t &fromVersion);
-//    virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
-//    virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
+    virtual BoolVariantResult_t doCreate(const SqlEngine_t &engine);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion);
+private:
+    BoolVariantResult_t createUuids(SqlEngineSharedPtr_t enginePtr);
 };
 
-struct TableAuthor : public IStorageOperations {
+struct TableAuthor : public StorageDDLOperations<SqlEngineSharedPtr_t> {
+
     //  Added fields
     //  1. 'ts_create' : creation timestamp
     //  2. 'ts_edit' : last edit timestamp
     //  3. 'del' : marker for deleted record
 
+    // V4:
+    // Added field FLD_UUID - for UUID (in RFC4122 and packed to string as BASE64)
     static const QString TBL_NAME;
     static const QString FLD_ID;
+    static const QString FLD_UUID;
     static const QString FLD_TITLE;
     static const QString FLD_TS_CREATE;
     static const QString FLD_TS_EDIT;
@@ -78,14 +92,16 @@ struct TableAuthor : public IStorageOperations {
 
 protected:
     // StorageElement interface
-    virtual BoolVariantResult_t doCreate(QSqlDatabase db);
-    virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V1_t &fromVersion);
-    virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V2_t &fromVersion);
-//    virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
-//    virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
+    virtual BoolVariantResult_t doCreate(const SqlEngine_t &engine);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion);
+
+private:
+    BoolVariantResult_t createUuids(SqlEngineSharedPtr_t enginePtr);
 };
 
-struct TableTags : public IStorageOperations {
+struct TableTags : public StorageDDLOperations<SqlEngineSharedPtr_t> {
     static const QString TBL_NAME;
 
     static const QString FLD_ID;
@@ -94,14 +110,16 @@ struct TableTags : public IStorageOperations {
 
 protected:
     // StorageElement interface
-    virtual BoolVariantResult_t doCreate(QSqlDatabase db);
-    virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V1_t &fromVersion);
-    virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V2_t &fromVersion);
-//    virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
-//    virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
+    virtual BoolVariantResult_t doCreate(const SqlEngine_t &engine);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion);
+    //    virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
+    //    virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
+
 };
 
-struct TableTagsNotes : public IStorageOperations {
+struct TableTagsNotes : public StorageDDLOperations<SqlEngineSharedPtr_t> {
     static const QString TBL_NAME;
 
     static const QString FLD_ID;
@@ -111,11 +129,12 @@ struct TableTagsNotes : public IStorageOperations {
     //    static BoolResult_t create(QSqlDatabase db);
 protected:
     // StorageElement interface
-    virtual BoolVariantResult_t doCreate(QSqlDatabase db);
-    virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V1_t &fromVersion);
-    virtual BoolVariantResult_t doUpgrade(QSqlDatabase db, const V2_t &fromVersion);
-//    virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
-//    virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
+    virtual BoolVariantResult_t doCreate(const SqlEngine_t &engine);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion);
+    //    virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
+    //    virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
 };
 
 } // namespace sqlite

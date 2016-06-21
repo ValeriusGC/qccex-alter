@@ -14,6 +14,7 @@ class QListWidgetItem;
 class QLabel;
 class QLineEdit;
 class QPushButton;
+class QUndoStack;
 QT_END_NAMESPACE
 
 //QT_FORWARD_DECLARE_CLASS(Settings)
@@ -34,6 +35,8 @@ public:
     explicit NoteWidget(QWidget *parent = 0);
     ~NoteWidget();
 
+    QUndoStack *undoStack() const;
+
 protected:
     void focusInEvent(QFocusEvent * event);
 
@@ -42,19 +45,36 @@ signals:
 public slots:
     void newNoteClicked();
 
+protected:
+    // QObject interface
+    virtual bool event(QEvent *e);
+
+public slots:
+    void addNote();
+    void delNote();
+    void editNote();
+
 private slots:
     void onBtnClicked();
     void onItemActivated(QListWidgetItem *item);
     void onCurrentItemChanged(QListWidgetItem * current, QListWidgetItem * previous);
     void onDblClicked(const QModelIndex &index);
+    void onModelReset();
+//    void onTaskProgress(const nq::ProgressInfo &pi, const QVariant &sp);
 
 private:
     NewNoteWidget *m_newNoteWidget;
     QListView *m_listWidget;
     model::NoteModel *m_model;
     QString m_template;
+    QUndoStack *m_undoStack;
+    QModelIndex m_currentModelIndex;
+//    BaseStorage<SqlEngineSharedPtr_t> *m_storage;
+
+    void retranslateUI();
 
 //    void makeItem(QListWidget *listWidget);
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,6 +132,7 @@ private slots:
 private:
     QLineEdit *m_editSearch;
     QPushButton *m_buttonInsert;
+
 };
 
 

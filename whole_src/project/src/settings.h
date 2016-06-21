@@ -82,6 +82,8 @@ private:
     ~Settings();
     Settings(Settings &);
     Settings &operator =(Settings &);
+
+    void relocalize(QWidget *parent, QLocale locale);
     // ~Methods
 
 };

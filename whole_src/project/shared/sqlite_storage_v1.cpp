@@ -10,7 +10,7 @@ const QString TableCfg::FLD_THE_KEY     = QStringLiteral("the_key");
 const QString TableCfg::FLD_THE_VALUE   = QStringLiteral("the_value");
 
 const QString TableCfg::QRY_CREATE      =
-        QString(QStringLiteral("create table %1(%2 integer primary key, %3 varchar, %4 varchar)"))
+        QString(QStringLiteral("CREATE TABLE %1(%2 INTEGER PRIMARY KEY ASC, %3 VARCHAR, %4 VARCHAR)"))
         .arg(TableCfg::TBL_NAME).arg(TableCfg::FLD_ID).arg(TableCfg::FLD_THE_KEY).arg(TableCfg::FLD_THE_VALUE);
 
 
@@ -19,5 +19,5 @@ const QString TableNote::FLD_ID         = QStringLiteral("id");
 const QString TableNote::FLD_THE_TEXT   = QStringLiteral("the_text");
 
 const QString TableNote::QRY_CREATE      =
-        QString(QStringLiteral("create table %1(%2 integer primary key, %3 varchar)"))
+        QString(QStringLiteral("CREATE TABLE %1(%2 INTEGER PRIMARY KEY ASC, %3 VARCHAR)"))
         .arg(TableNote::TBL_NAME).arg(TableNote::FLD_ID).arg(TableNote::FLD_THE_TEXT);

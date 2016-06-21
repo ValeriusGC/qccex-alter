@@ -38,19 +38,20 @@ struct TableNote {
     static const QString QRY_CREATE;
 };
 
-struct TableAuthor : public StorageElement {
+struct TableAuthor {
 
     static const QString TBL_NAME;
     static const QString FLD_ID;
     static const QString FLD_TITLE;
 
+    static const QString QRY_CREATE;
 //    static const QString QRY_CREATE;
 //    static BoolResult_t create(QSqlDatabase db);
 protected:
     // StorageElement interface
-    virtual BoolResult_t doCreate(QSqlDatabase db);
-    virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
-    virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
+//    virtual BoolResult_t doCreate(QSqlDatabase db);
+//    virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
+//    virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
 
 };
 

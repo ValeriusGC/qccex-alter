@@ -1,82 +1,42 @@
 #include "sqlstorageelement.h"
 
 namespace storage {
-namespace sqlite {
 
-const int IStorageOperations::INVALID_VERSION = 0;
-const int IStorageOperations::NEW_VERSION = 3;
+//template<typename Engine>
+//const int IStorageOperations<Engine>::INVALID_VERSION = 0;
+////const int IStorageOperations::NEW_VERSION = 3;
+////  16/06/11
+//// VERSION 4: BASE64 UUID as ids
+//template<typename Engine>
+//const int IStorageOperations<Engine>::NEW_VERSION = 4;
 
-IStorageOperations::~IStorageOperations()
-{
+//template<typename Engine>
+//IStorageOperations<Engine>::~IStorageOperations()
+//{
 
-}
+//}
 
-BoolVariantResult_t IStorageOperations::create(QSqlDatabase db)
-{
-    return doCreate(db);
-}
+//template<typename Engine>
+//BoolVariantResult_t IStorageOperations<Engine>::create(Engine engine)
+//{
+//    return doCreate(engine);
+//}
 
-BoolVariantResult_t IStorageOperations::upgrade(QSqlDatabase db, const qint32 &fromVersion)
-{
-    switch (fromVersion) {
-    case 1:
-        return doUpgrade(db, V1_t());
-    case 2:
-        return doUpgrade(db, V2_t());
-    default:
-        break;
-    }
-    return {false, QVariant()};
-}
-
-//======================================================================================================================
-
-const int StorageElement::INVALID_VERSION = 0;
-const int StorageElement::NEW_VERSION = 3;
-
-StorageElement::StorageElement()
-{
-
-}
-
-StorageElement::~StorageElement()
-{
-
-}
-
-BoolResult_t StorageElement::init(QSqlDatabase db, qint32 oldVersion)
-{
-//    IntResult_t ver = doGetCurrentVersion(db);
-//    if(ver.result() == INVALID_VERSION) {
-//        return {false, ver.data()};
+//template<typename Engine>
+//BoolVariantResult_t IStorageOperations<Engine>::upgrade(Engine engine, const qint32 &fromVersion)
+//{
+//    switch (fromVersion) {
+//    case 1:
+//        return doUpgrade(engine, V1_t());
+//    case 2:
+//        return doUpgrade(engine, V2_t());
+//    case 3:
+//        return doUpgrade(engine, V3_t());
+//    default:
+//        break;
 //    }
+//    return {false, QVariant()};
+//}
 
-//    const qint32 currV = ver.result();
-    BoolResult_t res = {false, ""};
-    switch(oldVersion){
-    case INVALID_VERSION:
-        res = doCreate(db);
-        break;
-    case 1:
-        res = doUpgradeFromV1(db);
-        break;
-    case 2:
-        res = doUpgradeFromV2(db);
-        break;
-    case NEW_VERSION:
-        res = {true, ""};
-        break;
-    default:
-        break;
-    }
-
-//    if(res.result()){
-//        res = doSetNewVersion(db);
-//    }
-
-    return res;
-}
-
-} // namespace sqlite
 } // namespace storage
 

@@ -40,6 +40,12 @@ private slots:
 
     void testAddNote3();
 
+    /**
+     * @brief testBase64Unique
+     * Testing unique on mass of records.
+     */
+    void testBase64Unique();
+
 
 private:
     /**

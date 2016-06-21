@@ -30,7 +30,7 @@ void NoteItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         output = index.data().toString();
     }else{
         output.replace("%title%",    "TITLE");
-        const qint64 ts = index.data(NoteModel::NMR_TsCreated).toLongLong();
+        const qint64 ts = index.data(NoteModel::NMR_TsEdited).toLongLong();
         output.replace("%datetime%", QDateTime::fromMSecsSinceEpoch(ts).toString());
         output.replace("%note%",     index.data().toString());
         output.replace("%tags%",     "taga taga");
@@ -128,7 +128,7 @@ QSize NoteItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
         output = index.data().toString();
     }else{
         output.replace("%title%",    "TITLE");
-        output.replace("%datetime%", index.data(NoteModel::NMR_TsCreated).toString());
+        output.replace("%datetime%", index.data(NoteModel::NMR_TsEdited).toString());
         output.replace("%note%",     index.data().toString());
         output.replace("%tags%",     "taga taga");
     }
