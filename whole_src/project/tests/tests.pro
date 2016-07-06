@@ -16,6 +16,7 @@ MGS_MIN_QT_VERSION = 5.4.0
 QT  *= core
 QT  *= gui
 QT  *= sql
+QT  *= network
 QT  *= testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -58,7 +59,12 @@ SOURCES *= $$files(*.cpp) \
     ../shared/sqlstorageelement.cpp \
     ../shared/shared_const.cpp \
     ../shared/shared_utils.cpp \
-    ../shared/sqlengine.cpp
+    ../shared/sqlengine.cpp \
+    test_httpconnect.cpp \
+    ../shared/httpclient.cpp \
+    ../shared/jsonparser.cpp \
+    ../shared/request.cpp \
+    ../shared/reply.cpp
 
 HEADERS *= $$files(*.h) \
             ../src/settings.h  \
@@ -86,7 +92,12 @@ HEADERS *= $$files(*.h) \
     ../shared/sqlstorageelement.h \
     ../shared/shared_const.h \
     ../shared/shared_utils.h \
-    ../shared/sqlengine.h
+    ../shared/sqlengine.h \
+    test_httpconnect.h \
+    ../shared/httpclient.h \
+    ../shared/jsonparser.h \
+    ../shared/request.h \
+    ../shared/reply.h
 
 CONFIG += debug
 # nullptr and other new C++ features

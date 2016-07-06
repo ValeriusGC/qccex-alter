@@ -42,6 +42,7 @@ SqliteStorage::SqliteStorage(QObject *parent) : Inhherited_t(parent)
     m_tableMap[TableAuthor::TBL_NAME] = StoragePtr_t(new TableAuthor);
     m_tableMap[TableTags::TBL_NAME] = StoragePtr_t(new TableTags);
     m_tableMap[TableTagsNotes::TBL_NAME] = StoragePtr_t(new TableTagsNotes);
+    m_tableMap[TableTmpFromSrv::TBL_NAME] = StoragePtr_t(new TableTmpFromSrv);
 }
 
 SqliteStorage::~SqliteStorage()
@@ -76,9 +77,6 @@ BoolVariantResult_t SqliteStorage::doCreate(const SqlEngine_t &engine)
         }
     }
     return {true, QVariant()};
-
-    // TODO 16/06/16 - Check TS_* fields in all tables
-    // Check Table Author 'Default Author'
 }
 
 BoolVariantResult_t SqliteStorage::doUpgrade(const SqlEngine_t &engine, const V1_t &dummy)
@@ -209,7 +207,6 @@ BoolVariantResult_t SqliteStorage::doUpgrade(const SqlEngine_t &engine, const V2
 
 BoolVariantResult_t SqliteStorage::doUpgrade(const SqlEngine_t &engine, const V3_t &dummy)
 {
-
     for(StoragePtr_t table: m_tableMap.values()){
         // dummy.value automatically dispathes
         BoolVariantResult_t res = table->upgrade(engine, dummy.value);
@@ -235,7 +232,6 @@ BoolVariantResult_t SqliteStorage::doUpgrade(const SqlEngine_t &engine, const V3
     }
 
     // Check if Note hasn't any tag - add default one.
-    // SELECT tbl_notes.id FROM tbl_notes LEFT OUTER JOIN tbl_tags_notes ON tbl_notes.id = fk_notes WHERE fk_notes IS NULL
     const QString strFindOrphanNotes =
             QString(QStringLiteral("SELECT %1.%2 FROM %1 LEFT OUTER JOIN %3 ON %1.%2 = %4 WHERE %4 IS NULL")
                     .arg(TableNote::TBL_NAME).arg(TableNote::FLD_ID)
@@ -257,6 +253,19 @@ BoolVariantResult_t SqliteStorage::doUpgrade(const SqlEngine_t &engine, const V3
         qInsert.addBindValue(tagId);
         if (!qInsert.exec()){
             return {false, qInsert.lastError().text()};
+        }
+    }
+
+    return {true, dummy.value};
+}
+
+BoolVariantResult_t SqliteStorage::doUpgrade(const SqliteStorage::SqlEngine_t &engine, const V4_t &dummy)
+{
+    for(StoragePtr_t table: m_tableMap.values()){
+        // dummy.value automatically dispathes
+        BoolVariantResult_t res = table->upgrade(engine, dummy.value);
+        if(!res.result()) {
+            return {false, res.data().toString()};
         }
     }
 

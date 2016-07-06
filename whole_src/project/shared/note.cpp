@@ -1,5 +1,9 @@
+#include <QUrl>
+#include <QJsonDocument>
+
 #include "note.h"
 #include "author.h"
+#include "storage_globals.h"
 
 using namespace model;
 
@@ -17,7 +21,7 @@ Note::Note(const QString &uuid, QObject *parent)
     const qint64 ts = QDateTime::currentMSecsSinceEpoch();
     m_tsCreated = ts;
     m_tsEdited = ts;
-//    LOG_TP(m_text << m_uuid);
+    //    LOG_TP(m_text << m_uuid);
 }
 
 Note::~Note()
@@ -120,6 +124,107 @@ Note *Note::copy() const
     res->m_asDel = m_asDel;
     res->m_valid = m_valid;
     return res;
+}
+
+bool Note::equalTo(Note *note) const
+{
+    if(note->uuid() != m_uuid){
+        return false;
+    }
+    if(note->asDel() != m_asDel){
+        return false;
+    }
+    if(note->text() != m_text){
+        return false;
+    }
+    if(note->authorId() != m_authorId){
+        return false;
+    }
+    if(note->tsCreated() != m_tsCreated){
+        return false;
+    }
+    if(note->tsEdited() != m_tsEdited){
+        return false;
+    }
+
+    return true;
+}
+
+QJsonObject Note::toHttpJsonObject()
+{
+    QJsonObject body;
+    using namespace storage;
+    body[Const::FLD_UUID] = QString(QUrl::toPercentEncoding(m_uuid));
+    body[Const::FLD_DEL] = m_asDel;
+    body[Const::FLD_AUTHOR_REF] = m_authorId;
+    body[Const::FLD_TS_CREATE] = m_tsCreated;
+    body[Const::FLD_TS_EDIT] = m_tsEdited;
+    body[Const::FLD_THE_TEXT] = QString(QUrl::toPercentEncoding(m_text));
+    return body;
+}
+
+QJsonObject Note::toJsonObject()
+{
+    QJsonObject body;
+    using namespace storage;
+    body[Const::FLD_UUID] = m_uuid;
+    body[Const::FLD_DEL] = m_asDel;
+    body[Const::FLD_AUTHOR_REF] = m_authorId;
+    body[Const::FLD_TS_CREATE] = m_tsCreated;
+    body[Const::FLD_TS_EDIT] = m_tsEdited;
+    body[Const::FLD_THE_TEXT] = m_text;
+    return body;
+}
+
+Note *Note::fromJsonObject(const QJsonObject &obj)
+{
+    if(obj.isEmpty()) {
+        return nullptr;
+    }
+
+    using namespace storage;
+    const QString uuid = obj[Const::FLD_UUID].toString();
+    Note *note = new Note(uuid);
+    {
+        QJsonValue jv = obj[Const::FLD_DEL];
+        if(jv.isString()){
+            note->setAsDel(obj[Const::FLD_DEL].toString().toInt());
+        }else if(jv.isBool()) {
+            note->setAsDel(obj[Const::FLD_DEL].toBool());
+        }
+    }
+    {
+        const QString name = Const::FLD_AUTHOR_REF;
+        const QString s = obj[Const::FLD_AUTHOR_REF].toString();
+
+        QJsonValue jv = obj[Const::FLD_AUTHOR_REF];
+        if(jv.isString()){
+            note->setAuthorId(obj[Const::FLD_AUTHOR_REF].toString().toInt());
+        }else if(jv.isDouble()) {
+            note->setAuthorId(obj[Const::FLD_AUTHOR_REF].toInt());
+        }
+    }
+
+    note->setText(obj[Const::FLD_THE_TEXT].toString());
+
+    {
+        QJsonValue jv = obj[Const::FLD_TS_CREATE];
+        if(jv.isString()){
+            note->setTsCreated(obj[Const::FLD_TS_CREATE].toString().toDouble());
+        }else if(jv.isDouble()) {
+            note->setTsCreated(obj[Const::FLD_TS_CREATE].toDouble());
+        }
+    }
+    {
+        QJsonValue jv = obj[Const::FLD_TS_EDIT];
+        if(jv.isString()){
+            note->setTsEdited(obj[Const::FLD_TS_EDIT].toString().toDouble());
+        }else if(jv.isDouble()) {
+            note->setTsEdited(obj[Const::FLD_TS_EDIT].toDouble());
+        }
+    }
+
+    return note;
 }
 
 

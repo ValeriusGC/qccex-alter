@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QJsonObject>
 QT_BEGIN_NAMESPACE
 class QUuid;
 QT_END_NAMESPACE
@@ -54,6 +55,12 @@ public:
      * @return Copy of this object
      */
     Note *copy() const;
+
+    bool equalTo(Note *note) const;
+
+    QJsonObject toHttpJsonObject();
+    QJsonObject toJsonObject();
+    static Note *fromJsonObject(const QJsonObject &obj);
 
 signals:
 

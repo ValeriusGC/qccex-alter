@@ -28,6 +28,7 @@ protected:
     virtual BoolVariantResult_t doUpgrade(const Engine &engine, const V1_t &fromVersion) = 0;
     virtual BoolVariantResult_t doUpgrade(const Engine &engine, const V2_t &fromVersion) = 0;
     virtual BoolVariantResult_t doUpgrade(const Engine &engine, const V3_t &fromVersion) = 0;
+    virtual BoolVariantResult_t doUpgrade(const Engine &engine, const V4_t &fromVersion) = 0;
 };
 
 template<typename Engine>
@@ -35,8 +36,14 @@ const int StorageDDLOperations<Engine>::INVALID_VERSION = 0;
 //const int IStorageOperations::NEW_VERSION = 3;
 //  16/06/11
 // VERSION 4: BASE64 UUID as ids
+//template<typename Engine>
+//const int StorageDDLOperations<Engine>::NEW_VERSION = 4;
+//  16/06/21
+// VERSION 5: SynchTable for temporarily getting records from server.
+//              After this loooong operation one can quick place them into local tables.
 template<typename Engine>
-const int StorageDDLOperations<Engine>::NEW_VERSION = 4;
+const int StorageDDLOperations<Engine>::NEW_VERSION = 5;
+
 
 
 template<typename Engine>

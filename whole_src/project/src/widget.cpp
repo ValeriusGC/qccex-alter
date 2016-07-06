@@ -168,8 +168,6 @@ void Widget::init()
 {
     StorageObjectOperations *storage = &SqliteStorage::instance();
     connect(storage, SIGNAL(fireInitProgress(nq::ProgressInfo)), SLOT(fireInitProgress(nq::ProgressInfo)));
-    connect(storage, SIGNAL(fireNotesAdded(QVector<qint32>)), SLOT(onNotesAdded(QVector<qint32>)));
-    connect(storage, SIGNAL(fireNotesMarkedAsDeleted(QVector<qint32>)), SLOT(onNotesMarkedAsDeleted(QVector<qint32>)));
     storage->init("qccex.db");
 
     setupUi();

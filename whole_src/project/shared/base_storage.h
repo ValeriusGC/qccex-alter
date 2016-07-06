@@ -46,6 +46,13 @@ public:
 
     bool isInit() const Q_DECL_FINAL;
 
+    /**
+     * @brief isBusy
+     *  Indicates that Storage busy.
+     * @return Busy state.
+     */
+    bool isBusy() const Q_DECL_FINAL;
+
     void fetchNotes(qint64 taskId, const UuidVector_t &ids) Q_DECL_FINAL;
     void clearNotes(qint64 taskId) Q_DECL_FINAL;
     void addNotes(qint64 taskId, const QSharedPointer<model::Notes> &notes) Q_DECL_FINAL;

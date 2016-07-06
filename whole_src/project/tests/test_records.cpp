@@ -19,6 +19,8 @@ TestRecords::~TestRecords()
 
 void TestRecords::initTestCase()
 {
+//    QSKIP("Temp skip");
+
     m_waitTime = 20;
     m_dbName = test::TEST_DB_NAME;
     QVERIFY(test::deleteDB(m_dbName));

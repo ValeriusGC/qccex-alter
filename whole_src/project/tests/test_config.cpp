@@ -5,6 +5,8 @@ using namespace nq;
 
 void Test_Config::initTestCase()
 {
+//    QSKIP("Temp skip");
+
     m_key = "testWrite";
     m_value = "testValue";
     QVERIFY("testValue" == m_value);

@@ -25,6 +25,8 @@ using namespace storage;
 
 void TestSqliteStorage::initTestCase()
 {
+//    QSKIP("Temp skip");
+
     qRegisterMetaType<nq::ProgressInfo>();
     qRegisterMetaType<model::NoteModel*>();
     //m_dbName = "TestSqliteStorage.db";
@@ -69,7 +71,7 @@ void TestSqliteStorage::testCreateV3()
     BoolVariantResult_t tablesRes = m_storage->tables();
     QVERIFY2(tablesRes.result() == true, tablesRes.data().toString().toLatin1());
     QStringList tables = tablesRes.data().toStringList();
-    QCOMPARE(tables.count(), 5);
+    QCOMPARE(tables.count(), 6);
     QVERIFY(tables.contains(storage::sqlite::TableCfg::TBL_NAME));
     QVERIFY(tables.contains(storage::sqlite::TableNote::TBL_NAME));
     QVERIFY(tables.contains(storage::sqlite::TableAuthor::TBL_NAME));
@@ -102,12 +104,13 @@ void TestSqliteStorage::testUpgradeV1V3()
     BoolVariantResult_t tablesRes = m_storage->tables();
     QVERIFY2(tablesRes.result() == true, tablesRes.data().toString().toLatin1());
     QStringList tables = tablesRes.data().toStringList();
-    QCOMPARE(tables.count(), 5);
+    QCOMPARE(tables.count(), 6);
     QVERIFY(tables.contains(storage::sqlite::TableCfg::TBL_NAME));
     QVERIFY(tables.contains(storage::sqlite::TableNote::TBL_NAME));
     QVERIFY(tables.contains(storage::sqlite::TableAuthor::TBL_NAME));
     QVERIFY(tables.contains(storage::sqlite::TableTags::TBL_NAME));
     QVERIFY(tables.contains(storage::sqlite::TableTagsNotes::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableTmpFromSrv::TBL_NAME));
 
     // Check al notes in DB (they mast be saved)
 //    QList<QVariant> l;
@@ -155,12 +158,13 @@ void TestSqliteStorage::testUpgradeV2V3()
     BoolVariantResult_t tablesRes = m_storage->tables();
     QVERIFY2(tablesRes.result() == true, tablesRes.data().toString().toLatin1());
     QStringList tables = tablesRes.data().toStringList();
-    QCOMPARE(tables.count(), 5);
+    QCOMPARE(tables.count(), 6);
     QVERIFY(tables.contains(storage::sqlite::TableCfg::TBL_NAME));
     QVERIFY(tables.contains(storage::sqlite::TableNote::TBL_NAME));
     QVERIFY(tables.contains(storage::sqlite::TableAuthor::TBL_NAME));
     QVERIFY(tables.contains(storage::sqlite::TableTags::TBL_NAME));
     QVERIFY(tables.contains(storage::sqlite::TableTagsNotes::TBL_NAME));
+    QVERIFY(tables.contains(storage::sqlite::TableTmpFromSrv::TBL_NAME));
 
     {
         QSignalSpy spyTask(m_storage, SIGNAL(fireTaskProgress(nq::ProgressInfo,QVariant)));

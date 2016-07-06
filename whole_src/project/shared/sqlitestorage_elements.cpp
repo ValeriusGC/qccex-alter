@@ -109,6 +109,12 @@ BoolVariantResult_t TableCfg::doUpgrade(const SqlEngine_t &engine, const V3_t &f
     return updateVersion(engine);
 }
 
+BoolVariantResult_t TableCfg::doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion)
+{
+    Q_UNUSED(fromVersion);
+    return updateVersion(engine);
+}
+
 BoolVariantResult_t TableCfg::updateVersion(SqlEngineSharedPtr_t enginePtr)
 {
     const qint64 ts = QDateTime::currentMSecsSinceEpoch();
@@ -293,6 +299,12 @@ BoolVariantResult_t TableNote::doUpgrade(const SqlEngine_t &engine, const V3_t &
     return {true, fromVersion.value};
 }
 
+BoolVariantResult_t TableNote::doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion)
+{
+    Q_UNUSED(engine);
+    return {true, fromVersion.value};
+}
+
 BoolVariantResult_t TableNote::createUuids(SqlEngineSharedPtr_t enginePtr)
 {
     const QString empties =
@@ -451,6 +463,12 @@ BoolVariantResult_t TableAuthor::doUpgrade(const SqlEngine_t &engine, const V3_t
     return {true, fromVersion.value};
 }
 
+BoolVariantResult_t TableAuthor::doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion)
+{
+    Q_UNUSED(engine);
+    return {true, fromVersion.value};
+}
+
 BoolVariantResult_t TableAuthor::createUuids(SqlEngineSharedPtr_t enginePtr)
 {
     const QString empties =
@@ -534,7 +552,12 @@ BoolVariantResult_t TableTags::doUpgrade(const SqlEngine_t &engine, const V2_t &
 BoolVariantResult_t TableTags::doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion)
 {
     Q_UNUSED(engine);
-    Q_UNUSED(fromVersion);
+    return {true, fromVersion.value};
+}
+
+BoolVariantResult_t TableTags::doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion)
+{
+    Q_UNUSED(engine);
     return {true, fromVersion.value};
 }
 
@@ -576,6 +599,59 @@ BoolVariantResult_t TableTagsNotes::doUpgrade(const SqlEngine_t &engine, const V
 {
     Q_UNUSED(engine);
     return {true, fromVersion.value};
+}
+
+BoolVariantResult_t TableTagsNotes::doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion)
+{
+    Q_UNUSED(engine);
+    return {true, fromVersion.value};
+}
+
+//======================================================================================================================
+
+const QString TableTmpFromSrv::TBL_NAME         = QStringLiteral("tbl_tmp_from_srv");
+
+const QString TableTmpFromSrv::FLD_ID           = QStringLiteral("id");
+const QString TableTmpFromSrv::FLD_UUID         = QStringLiteral("uuid");
+const QString TableTmpFromSrv::FLD_FULL_TEXT    = QStringLiteral("full_text");
+
+
+BoolVariantResult_t TableTmpFromSrv::doCreate(const SqlEngine_t &engine)
+{
+    const QString QRY_CREATE =
+            QString(QStringLiteral("CREATE TABLE %1(%2 INTEGER PRIMARY KEY ASC, %3 VARCHAR(24) NOT NULL, "
+                                   "%4 VARCHAR, CONSTRAINT `id_UNIQUE` UNIQUE (`%3`) )"))
+            .arg(TBL_NAME).arg(FLD_ID).arg(FLD_UUID).arg(FLD_FULL_TEXT);
+    QSqlQuery q(engine->db());
+    if (!q.exec(QRY_CREATE)){
+        return {false, q.lastError().text()};
+    }
+
+    return {true, QVariant()};
+}
+
+BoolVariantResult_t TableTmpFromSrv::doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion)
+{
+    Q_UNUSED(fromVersion);
+    return doCreate(engine);
+}
+
+BoolVariantResult_t TableTmpFromSrv::doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion)
+{
+    Q_UNUSED(fromVersion);
+    return doCreate(engine);
+}
+
+BoolVariantResult_t TableTmpFromSrv::doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion)
+{
+    Q_UNUSED(fromVersion);
+    return doCreate(engine);
+}
+
+BoolVariantResult_t TableTmpFromSrv::doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion)
+{
+    Q_UNUSED(fromVersion);
+    return doCreate(engine);
 }
 
 //======================================================================================================================

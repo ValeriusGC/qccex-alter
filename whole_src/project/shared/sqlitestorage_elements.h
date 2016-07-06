@@ -34,6 +34,7 @@ protected:
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion);
     //        virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
     //        virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
 private:
@@ -65,6 +66,7 @@ protected:
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion);
 private:
     BoolVariantResult_t createUuids(SqlEngineSharedPtr_t enginePtr);
 };
@@ -96,6 +98,7 @@ protected:
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion);
 
 private:
     BoolVariantResult_t createUuids(SqlEngineSharedPtr_t enginePtr);
@@ -114,8 +117,7 @@ protected:
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion);
-    //    virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
-    //    virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion);
 
 };
 
@@ -126,16 +128,47 @@ struct TableTagsNotes : public StorageDDLOperations<SqlEngineSharedPtr_t> {
     static const QString FLD_FK_TAGS;
     static const QString FLD_FK_NOTES;
 
-    //    static BoolResult_t create(QSqlDatabase db);
 protected:
     // StorageElement interface
     virtual BoolVariantResult_t doCreate(const SqlEngine_t &engine);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion);
-    //    virtual BoolResult_t doUpgradeFromV1(QSqlDatabase db);
-    //    virtual BoolResult_t doUpgradeFromV2(QSqlDatabase db);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion);
 };
+
+/**
+ * @brief The TableTmpFromSrv struct
+ *  V5. Stores data of last sync from Server before applying it locally.
+ *
+ *      16/06/21
+ *
+ *      Данные о синхронизации
+ *      - время: сначала - начала процесса, по окончании - завершения его
+ *      - результат, в т.ч. возможен промежуточный
+ *      - адрес сервера
+ *      - UUID сервера (сервер может менять адрес, но  не UUID)
+ *      - Нижний порог времени
+ *      - Верхний порог времени
+ *      - UUID клиента
+ *      - Размер разового пакета
+ */
+struct TableTmpFromSrv : public StorageDDLOperations<SqlEngineSharedPtr_t> {
+    static const QString TBL_NAME;
+
+    static const QString FLD_ID;
+    static const QString FLD_UUID;
+    static const QString FLD_FULL_TEXT;
+
+protected:
+    // StorageElement interface
+    virtual BoolVariantResult_t doCreate(const SqlEngine_t &engine);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &fromVersion);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V4_t &fromVersion);
+};
+
 
 } // namespace sqlite
 

@@ -31,7 +31,7 @@ void NoteItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     }else{
         output.replace("%title%",    "TITLE");
         const qint64 ts = index.data(NoteModel::NMR_TsEdited).toLongLong();
-        output.replace("%datetime%", QDateTime::fromMSecsSinceEpoch(ts).toString());
+        output.replace("%datetime%", QDateTime::fromMSecsSinceEpoch(ts).toUTC().toString("dd.MM.yyyy hh:mm:ss.zzz"));
         output.replace("%note%",     index.data().toString());
         output.replace("%tags%",     "taga taga");
     }

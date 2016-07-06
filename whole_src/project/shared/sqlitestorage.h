@@ -58,6 +58,7 @@ public:
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V1_t &dummy);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V2_t &dummy);
     virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V3_t &dummy);
+    virtual BoolVariantResult_t doUpgrade(const SqlEngine_t &engine, const V4_t &dummy);
 
 
 protected:
