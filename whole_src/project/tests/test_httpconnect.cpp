@@ -12,7 +12,7 @@
 using namespace model;
 using namespace storage;
 
-const qint32 HTTP_TIMEOUT_MSEC = 500;
+const qint32 HTTP_TIMEOUT_MSEC = 1500;
 
 TestHttpConnect::TestHttpConnect(QObject *parent) : QObject(parent)
 {
